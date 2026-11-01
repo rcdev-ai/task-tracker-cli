@@ -3,16 +3,16 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 6
+revision: 7
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 updated_by_role: ROLE-product-manager
 initiative: INIT-0007
-phase: DECOMPOSITION
+phase: READINESS
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-product-manager: DECOMPOSITION — write behavior and acceptance criteria for REQ-0016 and REQ-0017, then the coherence check"
+next_action: "ROLE-product-readiness-reviewer: READINESS round 1 of 2 (terminal unless blocking) on REQ-0016 rev 4 and REQ-0017 rev 3"
 blocked_by: []
 converged: true
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-DECOMPOSITION. Option A chosen and recorded as accepted `PD-0016` (indexed; decision counter 15 -> 16); Solution Contract accepted (`product/solution-contract.md`); `REQ-0016` and `REQ-0017` rev 2 consistent with `PD-0016`; `initiative.md` rev 3.
+READINESS. Convergence declared (`converged: true`): `REQ-0016` rev 4 and `REQ-0017` rev 3 accepted; coherence round 1 (terminal) `coherent`, its one non-blocking defect fixed; coverage validation zero defects. Readiness verdict pending.
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-product-manager: DECOMPOSITION — write behavior and acceptance criteria for REQ-0016 and REQ-0017, then the coherence check.
+ROLE-product-readiness-reviewer: READINESS round 1 of 2 (terminal unless blocking) on REQ-0016 rev 4 and REQ-0017 rev 3.
 
 ## Blocked by
 
@@ -268,6 +268,7 @@ Dates are UTC timestamps.
 | 2026-11-01T03:40:00Z | PRODUCT_DEFINITION | SOLUTION_EXPLORATION | ROLE-product-manager | PRODUCT_DEFINITION exit criteria met: outcome O1–O3, out of scope (6 items), success measures 1–6, draft `REQ-0016` and `REQ-0017` covering O1–O3, Product Definition Contract citing the raw request | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_EXPLORATION) holds: F1 `initiative.md` rev 2 has an outcome and a non-empty out-of-scope section; two `status: draft` `REQ-`; F2 draft-mode coverage (inline, deterministic): J1 -> `REQ-0016` Requirement ("give an existing task a due date they type"), J2 -> `REQ-0017` Requirement ("remove an existing task's due date"), J3 -> both ("one short command"); no `R1` defect. Story split (§4.1): one testable outcome each; `REQ-0017` `depends_on: [REQ-0016]` (it adds the removing form to the command `REQ-0016` introduces). `requirement` counter 15 -> 17, checked against `origin/main`. No scope `PD-` needed yet: A1, A4–A8 and A13 are recorded in the chosen-option `PD-`. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `5e0468d` |
 | 2026-11-01T03:52:00Z | SOLUTION_EXPLORATION | SOLUTION_CONVERGENCE | ROLE-product-manager | SOLUTION_EXPLORATION exit criteria met: options A and B recorded, each with a feasibility verdict (`feasible-with-constraints`) and a user-visible trade-off; PM recommends A with reasons | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_CONVERGENCE) holds: X1 two distinguishable options; X2 each verdict in the closed set (`technical/assessment.md` round 1); one Consultation log row for the one delegate response. No design dispatch: no visual surface (`project/constraints.md` row 8, `PD-0001` item 3; to be recorded in the convergence `PD-`, §9d.5). Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `d439134` |
 | 2026-11-01T04:05:00Z | SOLUTION_CONVERGENCE | DECOMPOSITION | ROLE-product-manager | SOLUTION_CONVERGENCE exit criteria met: one accepted `PD-0016` naming option A, B and five other shapes rejected with reasons, consequences accepted; indexed in the same commit; draft `REQ-0016`/`REQ-0017` rev 2 consistent with it; no option left under consideration; Solution Contract cites `PD-0016` and records no design concept (no visual surface, `PD-0016` item 14) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DECOMPOSITION) holds: exactly one `status: accepted` chosen-option `PD-` citing a non-`infeasible` verdict (`feasible-with-constraints`, `technical/assessment.md` round 1). HOOK-decision-capture R1 (index row, same commit), R3 (rejected options non-empty), D11 (decision counter 16 matches the highest id; `origin/main` at 15, no `PD-0016` there) pass. No escalation-class question: the option choice is settled by the request (escalation-policy §3 route 2, §4.1). Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `c7e34b5` |
+| 2026-11-01T04:30:00Z | DECOMPOSITION | READINESS | ROLE-product-manager | DECOMPOSITION exit criteria met: O1 -> accepted `REQ-0016` rev 4, O2 -> accepted `REQ-0017` rev 3, O3 -> both; each meets the nine points of §10.3 (accepted, one testable outcome, 11 and 10 pass/fail ACs, `CAP-0001`, no visual surface so no `DES-`, independently verifiable with `REQ-0017` `depends_on: [REQ-0016]` stated, no `blocker` `Q-`, no contradiction, indexed in the same commit); coherence round 1 (terminal) left no open blocking defect; convergence declared (`converged: true`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 READINESS) holds: `converged: true`; `HOOK-traceability` zero defects (Coverage validation, iteration 1); `technical/coherence.md` verdict `coherent`, round 1 terminal under §9d.3, D1 non-blocking and `fixed`; no user-facing story, so no `DES-` needed. AC texts for today's behaviour checked by the PM and by the architect on `node bin/ttc.js` at head `9d12abe`. Review budget this session: 1 of 6. Hooks: HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `3e90bc7` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
