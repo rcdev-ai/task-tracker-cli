@@ -15,7 +15,7 @@ requester: "the requester (repository owner, rortegalizardo), via the driving se
 next_action: "ROLE-product-readiness-reviewer: READINESS round 1 of 2 (terminal unless blocking) on REQ-0016 rev 4 and REQ-0017 rev 3"
 blocked_by: []
 converged: true
-readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
+readiness_verdict: READY   # none | READY | READY-with-known-issues | NOT READY | void
 stories: [REQ-0016, REQ-0017]
 design_refs: []
 decisions: [PD-0016]
@@ -183,6 +183,7 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 - `SOLUTION_EXPLORATION | ROLE-planner | claude | opus | L (subagent reported 118,819 tokens, 27 tool uses, 297 s) | a280b3f2c9fb135f8 | technical/capability-scan.md, impact.md, assessment.md`
 - `DECOMPOSITION | ROLE-planner | claude | opus | L (subagent reported 102,797 tokens, 21 tool uses, 232 s) | a035d5bba65351af1 | technical/coherence.md (round 1)`
+- `READINESS | ROLE-product-readiness-reviewer | claude | sonnet | M (subagent reported 86,335 tokens, 17 tool uses, 86 s) | adff31148a2cb4421 | Readiness log row 1 (READY)`
 
 ## Escalation log
 
@@ -235,6 +236,7 @@ what makes the verdict void when the set moves.
 
 | Date | Round | Verdict | Conditions | Reviewer | Story-set digest | Findings | Finding ids |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-10-31 | 1 | READY | none | ROLE-product-readiness-reviewer (claude, sonnet-5-5) | `(REQ-0016, 4, 2026-10-31), (REQ-0017, 3, 2026-10-31)`; `INIT-0007` revision 3 (matches the Coverage validation digest and the convergence row) | 0 findings. Judged band: R13 pass (every AC states a command, exact stdout/stderr, exit code and file state; dates used are fixed 2000-01-02 or 2099+, so no clock dependence); R14 pass (one outcome per story, set vs remove; both Non-goals mirror the initiative's out-of-scope); R15 pass (no `DES-`, `design_refs: []`, no visual surface per `PD-0016` item 14); R16 pass (no design, nothing implicit); R17 pass (success lines, no-op line, combination refusal, usage line, check order, leading-zero ids, same-date write, older-file behaviour all fixed; the only unfixed text is the `ttc due <id>` argument-error wording, which `PD-0003` item 2 assigns to engineering and both stories bound to "one line starting `ttc: `", exit 1, no write); R18 pass (`PD-0016`, `technical/assessment.md` C1-C10, the raw request and the cited code paths resolve). Flag-only: R8 no contradiction with an accepted `PD-` or `constraints.md` rows 1-9; R9 `feasible-with-constraints` and `coherent` (round 1, terminal) still describe the set: the verdict's date precedes `REQ-0016` rev 4 but the only change is the D1 clarifying clause, no substantive mismatch. B10: not applicable (no `DES-`). R1-R12 not re-run (validator report, matching digest, is the precondition). | none |
 
 ## Readiness findings
 
