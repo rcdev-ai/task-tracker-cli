@@ -17,7 +17,7 @@ story_set_digest: "REQ-0016@4/2026-10-31; REQ-0017@3/2026-10-31; INIT-0007@3"
 accepted_on: 2026-10-31
 dispatch_unit: ticket
 max_parallelism: 5
-completion: pending
+completion: blocked
 stories: [REQ-0016, REQ-0017]
 ---
 
@@ -69,14 +69,14 @@ stories: [REQ-0016, REQ-0017]
 
 | Unit | Stories | Depends on | State | Attempts | Last outcome | Dispatch ref | Wave | Updated |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TTC-1 | REQ-0016 | none | eligible | 0 | none | none | 0 | 2026-10-31 |
-| TTC-2 | REQ-0017 | TTC-1 | not-eligible | 0 | none | none | 1 | 2026-10-31 |
+| TTC-1 | REQ-0016 | none | failed | 1 | BLOCKED: TTC-1 — runaway: the third SHIP dispatch was refused (code 40, `factory progress reset --item TTC-1` is the owner's to run). Review-001 is APPROVED and PR #50 is green, but nothing is merged yet. The reason is in `~/Factory/Artifacts/projects/TTC/tickets/TTC-1/release/release.md`. | INIT-0007 wrapper_pid=39612; PRs #47-#50 open | 0 | 2026-10-31 |
+| TTC-2 | REQ-0017 | TTC-1 | unreachable | 0 | none | none | 1 | 2026-10-31 |
 
 ## Waves
 
 | Wave | Units | Eligible-now count |
 | --- | --- | --- |
-| 0 | TTC-1 | 1 |
+| 0 | TTC-1 | 0 |
 | 1 | TTC-2 | 0 |
 
 ## Dispatch ledger
@@ -84,7 +84,11 @@ stories: [REQ-0016, REQ-0017]
 | Date | Unit | Event | Detail |
 | --- | --- | --- | --- |
 | 2026-10-31 | INIT-0007 | accepted | band_owner delivery; cap 5 (manifest max_parallelism) |
+| 2026-10-31 | TTC-1 | dispatched | cap 5 (manifest max_parallelism); launcher wrapper_pid=39612 |
+| 2026-10-31 | TTC-1 | failed | BLOCKED: TTC-1 — runaway: the third SHIP dispatch was refused (code 40, `factory progress reset --item TTC-1` is the owner's to run). Review-001 is APPROVED and PR #50 is green, but nothing is merged yet. The reason is in `~/Factory/Artifacts/projects/TTC/tickets/TTC-1/release/release.md`. Release record: PR #47 required check RED: test; PRs #47-#50 open, none merged (gh pr view 50: OPEN). |
+| 2026-10-31 | TTC-2 | unreachable | dependency TTC-1 failed |
+| 2026-10-31 | INIT-0007 | completion | blocked: TTC-1 failed, TTC-2 unreachable; acceptance checks not run (no unit merged) |
 
 ## Completion
 
-_Computed per schema §5.8. `pending` until every unit is `complete`._
+blocked — TTC-1 failed (runaway SHIP dispatch, owner reset needed), TTC-2 unreachable. Acceptance checks not run: no ticket merged.
