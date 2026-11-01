@@ -26,7 +26,7 @@ const USAGE = [
   'ttc important <id>',
   'ttc unimportant <id>',
   'ttc postpone <id>',
-  'ttc due <id> YYYY-MM-DD',
+  'ttc due <id> YYYY-MM-DD | --clear',
   'ttc rename <id> "<title>"',
   'ttc delete <id>',
   'ttc clean',
@@ -337,6 +337,7 @@ function isLate(t, today) {
 
 const ADD = new Map([['--due', { value: true }], ['--tag', { value: true, repeat: true }], ['--note', { value: true }], ['--important', {}]]);
 const COPY = new Map([['--due', { value: true }]]);
+const DUE = new Map([['--clear', {}]]);
 const NOTE = new Map([['--clear', {}]]);
 const LIST = new Map([
   ['--open', {}],
@@ -484,17 +485,25 @@ const COMMANDS = {
   },
 
   due(args, ctx) {
-    const { positionals } = grammar(args, { positionals: 2, optional: 1, options: NO_OPTIONS });
+    // PD-0016 §1–9: grammar, id, conflict, missing form, date, read, task,
+    // then change or byte-preserving no-op. Setting the same date still writes.
+    const { positionals, options } = grammar(args, { positionals: 2, optional: 1, options: DUE });
     const id = parseId(positionals[0]);
-    if (positionals.length < 2) invalid();
     const date = positionals[1];
-    if (!isDate(date)) invalid();
+    const clear = options.has('--clear');
+    if (date !== undefined && clear) invalid();
+    if (date === undefined && !clear) invalid();
+    if (date !== undefined && !isDate(date)) invalid();
     const list = readStored(ctx.tree);
     const task = list.tasks.find((t) => t.id === id);
     if (task === undefined) invalid();
-    task.due = date;
+    if (clear && task.due === null) {
+      ctx.out = `Task ${id} has no due date\n`;
+      return;
+    }
+    task.due = clear ? null : date;
     writeStored(ctx.tree, list);
-    ctx.out = `Set due date of task ${id} to ${date}\n`;
+    ctx.out = clear ? `Cleared due date of task ${id}\n` : `Set due date of task ${id} to ${date}\n`;
   },
 
   rename(args, ctx) {
