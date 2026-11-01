@@ -3,16 +3,16 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 4
+revision: 5
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 updated_by_role: ROLE-product-manager
 initiative: INIT-0007
-phase: SOLUTION_EXPLORATION
+phase: SOLUTION_CONVERGENCE
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-planner (PRODUCT-DISCOVERY): feasibility verdicts for options A and B (capability scan, impact, assessment in one dispatch, §9d.1)"
+next_action: "ROLE-product-manager: SOLUTION_CONVERGENCE — record the chosen-option PD- and the Solution Contract"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-SOLUTION_EXPLORATION. `initiative.md` rev 2 (O1–O3, 6 out-of-scope items, success measures 1–6); draft `REQ-0016` (set) and `REQ-0017` (remove, after `REQ-0016`); Product Definition Contract accepted. Options A and B framed; architect feasibility pending.
+SOLUTION_CONVERGENCE. Options A and B recorded, both `feasible-with-constraints`, band `contained` (`technical/assessment.md`, round 1); PM recommends A.
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-planner (PRODUCT-DISCOVERY): feasibility verdicts for options A and B (capability scan, impact, assessment in one dispatch, §9d.1).
+ROLE-product-manager: SOLUTION_CONVERGENCE — record the chosen-option PD- and the Solution Contract.
 
 ## Blocked by
 
@@ -144,14 +144,41 @@ S2/S3 = the code and README at head `1084f0a`.
 
 ## Options
 
-_Written at SOLUTION_EXPLORATION._
+| Option | User-visible difference | Feasibility verdict | Cost / risk | Trade-off |
+| --- | --- | --- | --- | --- |
+| A — `ttc due <id> YYYY-MM-DD` and `ttc due <id> --clear` | Exactly the request's two commands. `ttc due <id>` with nothing else is an argument error | `feasible-with-constraints`, band `contained` (`technical/assessment.md`, round 1) | Constraints C1–C7, C9, C10; R1–R4. No stored-format change | Two forms, nothing else to learn; a look at one task's date stays `ttc list` |
+| B — `ttc due <id> [YYYY-MM-DD \| --clear]`, like `ttc note` | The same two forms as A, plus `ttc due <id>` alone prints the task's due date and changes nothing | `feasible-with-constraints`, band `contained` (`technical/assessment.md`, round 1) | Constraints C1–C8, C10; R1–R5 (R5: the show form must stay read-only). No stored-format change | A third form the request did not ask for (A7); it repeats what every `ttc list` line already shows (`PD-0003` item 8) |
+
+_Recommended option and why:_ **A.** The request names the two commands
+itself: "e.g. `ttc due <id> YYYY-MM-DD` and `ttc due <id> --clear`". A is
+exactly that, and serves O1–O3 in full. B adds a show form the request never
+asked for (A7); unlike a note, a due date is already on every `ttc list`
+line, so the form adds nothing a user lacks. Choosing the option that keeps
+the stated outcome intact without an unasked addition is the PM's call
+(§4.1; escalation-policy §3 route 2), so no requester question is raised.
+B is a superset of A with the same meaning where they overlap, so a later
+move to B forecloses nothing (assessment, "Option choice"). The architect's
+N1–N6 are taken as recommended: setting the date a task already has is a
+normal success that writes, like a same-title `rename` (N1; the R4 side
+effect on older files is stated in the `PD-`); `--clear` on a task with no
+due date prints `Task <id> has no due date`, exit 0, writes nothing (N2);
+one usage line after `ttc postpone <id>`, `ttc due <id> YYYY-MM-DD` from
+`REQ-0016`, extended to `ttc due <id> YYYY-MM-DD | --clear` by `REQ-0017`
+(N3); `note`'s check order with the date check in place of the text check
+(N4); the two-story split kept, with `REQ-0016` asserting nothing about
+`--clear` and no fixed bare-id text (N5, R3); no stored-format change (N6).
+
+_Chosen:_ recorded at SOLUTION_CONVERGENCE.
 
 ## Consultation log
 
 | Date | Delegate role | Question | Answer / verdict | Recorded as |
 | --- | --- | --- | --- | --- |
+| 2026-10-31 | ROLE-planner (PRODUCT-DISCOVERY) | Feasibility verdict, constraints, risks and band for options A and B, plus recommendations on N1–N6 (one dispatch: capability scan, impact, assessment; §9d.1) | A `feasible-with-constraints`, `contained`; B `feasible-with-constraints`, `contained`; constraints C1–C10 (C8 B only, C9 A only); risks R1–R5 (R5 B only); assumptions P1–P6 all narrowing, none blocking or costly; no stored-format change (C3, N6). N1 normal success line that writes (R4: an older file becomes version 4); N2 `Task <id> has no due date`, exit 0, no write; N3 one usage line after `ttc postpone <id>`, extended by `REQ-0017`; N4 `note`'s check order, date check last before the lock; N5 split sound, `REQ-0016` must not assert the `--clear` refusal and must fix no bare-id text; N6 no format change. Registry note: `CAP-0001` out of date (as in INIT-0002..0006), left for initiative close | `technical/capability-scan.md`, `technical/impact.md`, `technical/assessment.md` (round 1); this row; C1–C7, C9, C10, N1–N6 go to the convergence `PD-`. Vendor claude, model opus |
 
 Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | artifact produced`
+
+- `SOLUTION_EXPLORATION | ROLE-planner | claude | opus | L (subagent reported 118,819 tokens, 27 tool uses, 297 s) | a280b3f2c9fb135f8 | technical/capability-scan.md, impact.md, assessment.md`
 
 ## Escalation log
 
@@ -208,6 +235,7 @@ Dates are UTC timestamps.
 | 2026-11-01T03:33:00Z | INTAKE | DISCOVERY | ROLE-product-manager | INTAKE exit criteria met: one initiative, one problem, one named requester, ambiguity rows A1–A13 all classified (`pm-resolvable`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DISCOVERY) holds: `initiative.md` at `status: draft`; state at INTAKE with requester, problem statement and a classified ambiguity log. Discovery written (J1–J3, P1–P4, S2 `CAP-0001`, S3 signals 1–4, non-goals). No delegate consulted (optional, read-only; the code and README answer the current state). No `Q-` raised. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `aceeb99` |
 | 2026-11-01T03:34:00Z | DISCOVERY | PRODUCT_DEFINITION | ROLE-product-manager | DISCOVERY exit criteria met: problem, user, current state and success signals stated with sources; no open escalation-class ambiguity | Entry precondition (`lifecycle-hooks.md` §3.4.1 PRODUCT_DEFINITION) holds: Discovery has the target user, jobs J1–J3 and problems P1–P4 each with a source (S1), mapping `CAP-0001` (S2), success signals 1–4 (S3) and known non-goals. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `429444c` |
 | 2026-11-01T03:40:00Z | PRODUCT_DEFINITION | SOLUTION_EXPLORATION | ROLE-product-manager | PRODUCT_DEFINITION exit criteria met: outcome O1–O3, out of scope (6 items), success measures 1–6, draft `REQ-0016` and `REQ-0017` covering O1–O3, Product Definition Contract citing the raw request | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_EXPLORATION) holds: F1 `initiative.md` rev 2 has an outcome and a non-empty out-of-scope section; two `status: draft` `REQ-`; F2 draft-mode coverage (inline, deterministic): J1 -> `REQ-0016` Requirement ("give an existing task a due date they type"), J2 -> `REQ-0017` Requirement ("remove an existing task's due date"), J3 -> both ("one short command"); no `R1` defect. Story split (§4.1): one testable outcome each; `REQ-0017` `depends_on: [REQ-0016]` (it adds the removing form to the command `REQ-0016` introduces). `requirement` counter 15 -> 17, checked against `origin/main`. No scope `PD-` needed yet: A1, A4–A8 and A13 are recorded in the chosen-option `PD-`. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `5e0468d` |
+| 2026-11-01T03:52:00Z | SOLUTION_EXPLORATION | SOLUTION_CONVERGENCE | ROLE-product-manager | SOLUTION_EXPLORATION exit criteria met: options A and B recorded, each with a feasibility verdict (`feasible-with-constraints`) and a user-visible trade-off; PM recommends A with reasons | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_CONVERGENCE) holds: X1 two distinguishable options; X2 each verdict in the closed set (`technical/assessment.md` round 1); one Consultation log row for the one delegate response. No design dispatch: no visual surface (`project/constraints.md` row 8, `PD-0001` item 3; to be recorded in the convergence `PD-`, §9d.5). Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `d439134` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
