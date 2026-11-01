@@ -28,13 +28,10 @@ areas: []
 # own domain only; product/ holds the committed mirror used by stateless agents.
 external_systems:
   issue_tracker:
-    kind: linear
-    # Team binding recorded at bootstrap (requester's answer). Tickets are
-    # created in this team at HANDOFF by SKILL-create-tickets-from-stories;
-    # no ticket exists yet.
-    team_name: "RC Development"
-    team_key: RCDEV
-    team_id: "abd1c503-8acd-415e-ba29-68d2791136c9"
+    kind: ariadne
+    # Ariadne project binding (since 2026-10-31). Tickets are created
+    # in this project at HANDOFF by SKILL-create-tickets-from-stories.
+    project: TTC
     ticket_key_pattern: "^[A-Z]+-[0-9]+$"
     mirror: "product/delivery/tickets.md"
   # Claude Design. Editable source of every DES- record; the repository holds
@@ -117,7 +114,7 @@ roles:
   # and never writes a ticket manifest or a ticket graph.
   # `tickets` is granted for the initial `REQ- -> ticket` mapping only, written
   # once at HANDOFF by SKILL-create-tickets-from-stories. The tracker still owns
-  # ticket identity: every key comes from a Linear response, never from the PM.
+  # ticket identity: every key comes from an Ariadne response, never from the PM.
   # Branch, PR, and status columns belong to the delivery roles thereafter.
   ROLE-product-manager:
     writes: [project-context, area, capability, decision, initiative, requirement, product-state, product-state-history, question, delivery-manifest, tickets]
@@ -182,7 +179,7 @@ id_counters:
   # counter, exactly like ROLE- and SKILL-. This key stays at 0 permanently.
   area: 0
   capability: 1
-  decision: 14
+  decision: 15
   initiative: 6
   requirement: 15
   design: 0

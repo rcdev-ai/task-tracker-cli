@@ -3,10 +3,10 @@ id: ARCH-lifecycle-hooks
 type: architecture
 title: Lifecycle hooks and deterministic guardrails
 status: authoritative
-revision: 1
+revision: 2
 owner_role: ROLE-product-architect
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 ---
 
 # Lifecycle hooks and deterministic guardrails
@@ -413,7 +413,7 @@ validator digest does not match that set.
 | **When it executes** | At phase ENGINEERING_READY, carrying through HANDOFF in the same session. |
 | **Triggering event** | A recorded, non-void `READY` or `READY-with-known-issues` verdict. |
 | **Inputs** | The verdict; the accepted story set; design exports; decisions in force; binding technical constraints; the open-question list. |
-| **Deterministic checks** | `H0`/`C3` every named story satisfies the sixteen elements of the canonical story schema, with every empty form written explicitly rather than omitted. `H1`/`C1` `readiness_verdict` is `READY` or `READY-with-known-issues`, and not `void`. `H2`/`C2` `HOOK-traceability` returns zero defects. `H3` every story is `accepted`. `H4`/`C4` the digest still matches. `H5`/`C5` no `blocker` `Q-` is open. `H6`/`C6` every referenced identifier resolves and every `local_export` exists on disk. `H7`/`C7` every packet bullet is populated or carries its explicit empty form. `H8`/`C8` every condition on the verdict is a non-`blocker` `Q-` or `PD-`. `H9` the PM never writes `delivery/state.md` and never waits for it. `H13`/`C12` every accepted story resolves to a real tracker key created against Linear, so what leaves HANDOFF is `ticket_code`s. `H10` each story in the digest gets `readiness: engineering-ready`. `H11`/`C10` no product-side artifact carries an HLD, an execution plan, a task breakdown, or an estimate. `H12`/`C11` the delivery manifest exists against this same verdict and digest. |
+| **Deterministic checks** | `H0`/`C3` every named story satisfies the sixteen elements of the canonical story schema, with every empty form written explicitly rather than omitted. `H1`/`C1` `readiness_verdict` is `READY` or `READY-with-known-issues`, and not `void`. `H2`/`C2` `HOOK-traceability` returns zero defects. `H3` every story is `accepted`. `H4`/`C4` the digest still matches. `H5`/`C5` no `blocker` `Q-` is open. `H6`/`C6` every referenced identifier resolves and every `local_export` exists on disk. `H7`/`C7` every packet bullet is populated or carries its explicit empty form. `H8`/`C8` every condition on the verdict is a non-`blocker` `Q-` or `PD-`. `H9` the PM never writes `delivery/state.md` and never waits for it. `H13`/`C12` every accepted story resolves to a real tracker key created in Ariadne, so what leaves HANDOFF is `ticket_code`s. `H10` each story in the digest gets `readiness: engineering-ready`. `H11`/`C10` no product-side artifact carries an HLD, an execution plan, a task breakdown, or an estimate. `H12`/`C11` the delivery manifest exists against this same verdict and digest. |
 | **LLM-judgement checks** | None. Every check is a comparison two independent implementations return the same result on. |
 | **Pass behaviour** | The `## Handoff packet` section; the initiative at `status: active`; a `Handoff log` row naming the receiving role and date; `phase: HANDOFF` with `next_action: "ROLE-orchestrator: SKILL-resume-initiative"`. |
 | **Failure behaviour** | **A non-conforming handoff is not a degraded handoff.** The gate stays shut and the initiative waits as `blocked`. `H4` specifically forces a regression to READINESS rather than a reconciliation. |

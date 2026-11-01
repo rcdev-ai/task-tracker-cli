@@ -3,10 +3,10 @@ id: ARCH-repository-layout
 type: architecture
 title: Canonical repository layout
 status: authoritative
-revision: 1
+revision: 2
 owner_role: ROLE-product-architect
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 ---
 
 # Canonical repository layout
@@ -189,7 +189,7 @@ delivery board excludes them; the index does not.
 | Location | Role | Authoritative? |
 | --- | --- | --- |
 | `product/**` | Product memory | **Yes** |
-| Issue tracker (Linear etc.) | System of record for ticket status/assignment | For ticket state only; mirrored into `delivery/tickets.md` |
+| Issue tracker (Ariadne) | System of record for ticket status/assignment | For ticket state only; mirrored into `delivery/tickets.md` |
 | External design tool | System of record for editable design files | For the design source only; mirrored as `DES-` record + local export |
 | Working Context Packet | The assembled working set for one session | **No.** Derived, instantaneous, and never read by a later session — only its `context_digest` persists. |
 | Session-local batch file (`~/Factory/Artifacts/projects/TTC/batches/<slug>.md`) | Convenience mirror of a fanout run | **No.** `delivery/manifest.md` is authoritative for an initiative's dispatch state; on disagreement the mirror is rewritten. |

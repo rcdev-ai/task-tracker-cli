@@ -3,10 +3,10 @@ id: ARCH-engineering-handoff
 type: architecture
 title: Product-to-engineering handoff contract
 status: authoritative
-revision: 1
+revision: 2
 owner_role: ROLE-product-architect
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 ---
 
 # Product-to-engineering handoff contract
@@ -103,7 +103,7 @@ The `REQ- → ticket` mapping is written into `delivery/tickets.md` by
 that mapping is authoritative. The procedure is
 `SKILL-create-tickets-from-stories`, declared at
 `~/.claude/skills/create-tickets-from-stories/SKILL.md` and invoked from
-`SKILL-prepare-engineering-handoff` step 14b. It calls Linear for every key —
+`SKILL-prepare-engineering-handoff` step 14b. It calls Ariadne for every key —
 the tracker-owns-identity rule above is unchanged and is exactly why the
 creation must hit the real tracker rather than be deferred to someone who might
 invent one. Because the tickets already exist, `delivery-fanout.md` §5 `P3` is
@@ -297,7 +297,7 @@ files by two independent implementations returning the same result.
 | `C9` | `product/state.md` is at `phase: HANDOFF` with `next_action` naming the created `ticket_code`s, and a `Handoff log` row names the receiving role and date. | `SKILL-prepare-engineering-handoff` outputs |
 | `C10` | No product-side artifact contains an HLD, an execution plan, a task breakdown, or an estimate. | `H11`; §5 rule 1 |
 | `C11` | A `delivery/manifest.md` exists, is issued against the same verdict and digest as the packet, is at `band_owner: product`, and satisfies `M1`–`M8` of the manifest schema. | `SKILL-compile-delivery-manifest`; `delivery-fanout.md` `F1` |
-| `C12` | Every accepted, engineering-ready story resolves to ≥1 real tracker key in `delivery/tickets.md`, every key came from a Linear response, and no ticket carries a marker exempting it from any downstream stage. | `SKILL-create-tickets-from-stories` `X2`–`X7` |
+| `C12` | Every accepted, engineering-ready story resolves to ≥1 real tracker key in `delivery/tickets.md`, every key came from an Ariadne response, and no ticket carries a marker exempting it from any downstream stage. | `SKILL-create-tickets-from-stories` `X2`–`X7` |
 
 A non-conforming handoff is not a degraded handoff. The gate stays shut and the
 initiative waits as `blocked`.

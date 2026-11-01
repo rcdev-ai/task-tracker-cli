@@ -3,10 +3,10 @@ id: SCHEMA-index-formats
 type: schema
 title: Index and manifest formats
 status: authoritative
-revision: 1
+revision: 2
 owner_role: ROLE-product-architect
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 ---
 
 # Index and manifest formats
@@ -92,7 +92,7 @@ initiatives.
 The initial mapping — `Ticket`, `Title`, `Initiative`, `Requirements`, `Depends
 on` — is written by `ROLE-product-manager` as the last act of HANDOFF, via
 `SKILL-create-tickets-from-stories`. `Branch`, `PR`, and `Status` are written by
-the delivery roles from then on. Every tracker key comes from a Linear response:
+the delivery roles from then on. Every tracker key comes from an Ariadne response:
 the product side calls the real tracker and copies what it returns, and a `REQ-`
 identifier is never re-encoded into a tracker key.
 

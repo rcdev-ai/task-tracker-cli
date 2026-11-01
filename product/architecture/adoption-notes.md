@@ -3,10 +3,10 @@ id: ARCH-adoption
 type: architecture
 title: Adoption notes — provenance of this Product Memory tree
 status: authoritative
-revision: 1
+revision: 2
 owner_role: ROLE-product-architect
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 ---
 
 # Adoption notes
@@ -36,7 +36,7 @@ performed it. It holds no authority from now on and is deliberately absent from
 | Product name | Task Tracker CLI |
 | Product key | `TTC` |
 | Scaling profile | `S` |
-| Issue tracker | Linear, team "RC Development" (`RCDEV`), id `abd1c503-8acd-415e-ba29-68d2791136c9` |
+| Issue tracker | Linear, team "RC Development" (`RCDEV`), id `abd1c503-8acd-415e-ba29-68d2791136c9` (historical; since 2026-10-31 the binding is the Ariadne project `TTC`, see `manifest.yaml` and `PD-0015`) |
 | Up-front constraints | "Node.js, built-in libraries only" |
 | Product description | none yet; it will be given at INTAKE |
 

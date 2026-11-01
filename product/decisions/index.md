@@ -7,6 +7,7 @@ not re-open the question.
 
 | ID | Title | Status | Path | Updated |
 | --- | --- | --- | --- | --- |
+| PD-0015 | The ttc tickets live in the Ariadne project TTC | accepted | [PD-0015-ttc-tickets-live-in-ariadne.md](PD-0015-ttc-tickets-live-in-ariadne.md) | 2026-10-31 |
 | PD-0014 | Build INIT-0006 as option B, ttc list --no-due narrows any view to tasks with no due date, and ttc export takes it too | accepted | [PD-0014-ttc-no-due-filter-option-b.md](PD-0014-ttc-no-due-filter-option-b.md) | 2026-10-29 |
 | PD-0013 | Build INIT-0005 as option B, ttc copy makes a new open task from an existing one and can give it a different due date | accepted | [PD-0013-ttc-copy-option-b.md](PD-0013-ttc-copy-option-b.md) | 2026-10-29 |
 | PD-0012 | Build INIT-0004 as option A, ttc clean removes every done task in one command and prints how many it removed | accepted | [PD-0012-ttc-clean-option-a.md](PD-0012-ttc-clean-option-a.md) | 2026-10-28 |
@@ -14,7 +15,7 @@ not re-open the question.
 | PD-0010 | Store the important mark in a new data format version 4, and accept that the upgrade is one-way | accepted | [PD-0010-ttc-format-4-one-way-upgrade.md](PD-0010-ttc-format-4-one-way-upgrade.md) | 2026-10-26 |
 | PD-0009 | Build INIT-0002 as option A, one on/off important mark that ttc list shows first | accepted | [PD-0009-ttc-important-mark-option-a.md](PD-0009-ttc-important-mark-option-a.md) | 2026-10-26 |
 | PD-0008 | A changing command that saves its change and then cannot print its confirmation exits 1, and the change stays saved | accepted | [PD-0008-ttc-failure-after-saved-change.md](PD-0008-ttc-failure-after-saved-change.md) | 2026-10-22 |
-| PD-0007 | The ttc tickets live in a new Linear project, Task Tracker CLI, in team RC Development | accepted | [PD-0007-ttc-linear-project.md](PD-0007-ttc-linear-project.md) | 2026-10-20 |
+| PD-0007 | The ttc tickets live in a new Linear project, Task Tracker CLI, in team RC Development | superseded | [PD-0007-ttc-linear-project.md](PD-0007-ttc-linear-project.md) | 2026-10-31 |
 | PD-0006 | Titles in a stored or imported file must be in stored form, and an import may give ids again | accepted | [PD-0006-ttc-file-titles-and-ids-after-import.md](PD-0006-ttc-file-titles-and-ids-after-import.md) | 2026-10-20 |
 | PD-0005 | Build ttc as option A, the ten-story command the spec states, under the architect's constraints | accepted | [PD-0005-ttc-chosen-option-a.md](PD-0005-ttc-chosen-option-a.md) | 2026-10-20 |
 | PD-0004 | Add the ttc behaviour rules the feasibility assessment showed were missing | accepted | [PD-0004-ttc-rules-from-feasibility.md](PD-0004-ttc-rules-from-feasibility.md) | 2026-10-20 |

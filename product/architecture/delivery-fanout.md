@@ -3,10 +3,10 @@ id: ARCH-delivery-fanout
 type: architecture
 title: Delivery manifest and batch fanout integration contract
 status: authoritative
-revision: 1
+revision: 2
 owner_role: ROLE-product-architect
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 ---
 
 # Delivery manifest and batch fanout integration contract
@@ -46,7 +46,7 @@ document references and never restates. The mechanism's procedure is
   ROLE-product-manager · phase ENGINEERING_READY → HANDOFF
         │  SKILL-prepare-engineering-handoff    → ## Handoff packet
         │  SKILL-compile-delivery-manifest      → delivery/manifest.md, band_owner: product
-        │  SKILL-create-tickets-from-stories    → real Linear tickets + delivery/tickets.md
+        │  SKILL-create-tickets-from-stories    → real Ariadne tickets + delivery/tickets.md
         ▼
   fan-out session · initiative scope
         │  SKILL-resume-initiative  → delivery/state.md, band_owner: delivery
@@ -71,7 +71,7 @@ band.
 | Stage | Owns | Must not |
 | --- | --- | --- |
 | Product Readiness | The binary verdict and its conditions | Schedule anything |
-| Ticket creation (HANDOFF, `ROLE-product-manager`) | The `REQ- → ticket` mapping and the tracker keys, obtained from Linear | Invent a key; write a branch, a PR, a status, a plan, or any downstream exemption |
+| Ticket creation (HANDOFF, `ROLE-product-manager`) | The `REQ- → ticket` mapping and the tracker keys, obtained from Ariadne | Invent a key; write a branch, a PR, a status, a plan, or any downstream exemption |
 | Delivery Manifest (product band) | Story set, readiness, story DAG, blocking, ordering constraints, shared references | Name a branch, a task, or an estimate |
 | Delivery Manifest (execution band) | Dispatch units, waves, state, attempts, dispatch refs, completion | Restate or contradict a product-band fact |
 | Batch Fanout | Which eligible units are in flight, and the ledger rows recording it | Read a story, judge readiness, re-order the graph, retry a failure |

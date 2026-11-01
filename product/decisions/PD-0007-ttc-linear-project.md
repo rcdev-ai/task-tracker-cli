@@ -2,15 +2,15 @@
 id: PD-0007
 type: decision
 title: The ttc tickets live in a new Linear project, Task Tracker CLI, in team RC Development
-status: accepted
+status: superseded
 revision: 1
 owner_role: ROLE-product-manager
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-31
 decided_on: 2026-10-20
 affects: [INIT-0001]
 supersedes:
-superseded_by:
+superseded_by: PD-0015
 ---
 
 # PD-0007 — The ttc tickets live in a new Linear project, Task Tracker CLI, in team RC Development
