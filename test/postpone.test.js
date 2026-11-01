@@ -190,6 +190,7 @@ test('AC-12: help lists postpone after unimportant', () => {
         '  ttc important <id>',
         '  ttc unimportant <id>',
         '  ttc postpone <id>',
+        '  ttc due <id> YYYY-MM-DD',
         '  ttc rename <id> "<title>"',
         '  ttc delete <id>',
         '  ttc clean',

@@ -2,7 +2,7 @@
 
 // The test-owned reference model (the oracle) for ttc. It is written from the
 // documented rules (src/args.js and src/storage.js headers, PD-0002, PD-0003,
-// PD-0009, PD-0010, PD-0011, PD-0012, PD-0013, PD-0014, C7) and never requires anything under src/.
+// PD-0009, PD-0010, PD-0011, PD-0012, PD-0013, PD-0014, PD-0016, C7) and never requires anything under src/.
 //
 // expect({ argv, files, today }) returns { ok: false } or
 // { ok: true, stdout, files }. `files` maps paths relative to the case folder
@@ -26,6 +26,7 @@ const USAGE = [
   'ttc important <id>',
   'ttc unimportant <id>',
   'ttc postpone <id>',
+  'ttc due <id> YYYY-MM-DD',
   'ttc rename <id> "<title>"',
   'ttc delete <id>',
   'ttc clean',
@@ -480,6 +481,20 @@ const COMMANDS = {
     task.due = nextDay(later);
     writeStored(ctx.tree, list);
     ctx.out = 'Postponed task ' + id + ' to ' + task.due + '\n';
+  },
+
+  due(args, ctx) {
+    const { positionals } = grammar(args, { positionals: 2, optional: 1, options: NO_OPTIONS });
+    const id = parseId(positionals[0]);
+    if (positionals.length < 2) invalid();
+    const date = positionals[1];
+    if (!isDate(date)) invalid();
+    const list = readStored(ctx.tree);
+    const task = list.tasks.find((t) => t.id === id);
+    if (task === undefined) invalid();
+    task.due = date;
+    writeStored(ctx.tree, list);
+    ctx.out = `Set due date of task ${id} to ${date}\n`;
   },
 
   rename(args, ctx) {

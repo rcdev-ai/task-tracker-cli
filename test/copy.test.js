@@ -221,6 +221,7 @@ test('AC-13: help lists the exact copy usage between add and list', (t) => {
     '  ttc important <id>',
     '  ttc unimportant <id>',
     '  ttc postpone <id>',
+    '  ttc due <id> YYYY-MM-DD',
     '  ttc rename <id> "<title>"',
     '  ttc delete <id>',
     '  ttc clean',
