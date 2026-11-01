@@ -17,7 +17,7 @@ story_set_digest: "REQ-0016@4/2026-10-31; REQ-0017@3/2026-10-31; INIT-0007@3"
 accepted_on: 2026-10-31
 dispatch_unit: ticket
 max_parallelism: 5
-completion: blocked
+completion: pending
 stories: [REQ-0016, REQ-0017]
 ---
 
@@ -69,14 +69,14 @@ stories: [REQ-0016, REQ-0017]
 
 | Unit | Stories | Depends on | State | Attempts | Last outcome | Dispatch ref | Wave | Updated |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TTC-1 | REQ-0016 | none | failed | 1 | BLOCKED: TTC-1 — runaway: the third SHIP dispatch was refused (code 40, `factory progress reset --item TTC-1` is the owner's to run). Review-001 is APPROVED and PR #50 is green, but nothing is merged yet. The reason is in `~/Factory/Artifacts/projects/TTC/tickets/TTC-1/release/release.md`. | INIT-0007 wrapper_pid=39612; PRs #47-#50 open | 0 | 2026-10-31 |
-| TTC-2 | REQ-0017 | TTC-1 | unreachable | 0 | none | none | 1 | 2026-10-31 |
+| TTC-1 | REQ-0016 | none | eligible | 1 | BLOCKED: TTC-1 — runaway: the third SHIP dispatch was refused (code 40). | INIT-0007 wrapper_pid=39612; PR #50 merged fd66d58 (backstop), #47-#49 merged | 0 | 2026-11-01 |
+| TTC-2 | REQ-0017 | TTC-1 | not-eligible | 0 | none | none | 1 | 2026-10-31 |
 
 ## Waves
 
 | Wave | Units | Eligible-now count |
 | --- | --- | --- |
-| 0 | TTC-1 | 0 |
+| 0 | TTC-1 | 1 |
 | 1 | TTC-2 | 0 |
 
 ## Dispatch ledger
@@ -88,7 +88,9 @@ stories: [REQ-0016, REQ-0017]
 | 2026-10-31 | TTC-1 | failed | BLOCKED: TTC-1 — runaway: the third SHIP dispatch was refused (code 40, `factory progress reset --item TTC-1` is the owner's to run). Review-001 is APPROVED and PR #50 is green, but nothing is merged yet. The reason is in `~/Factory/Artifacts/projects/TTC/tickets/TTC-1/release/release.md`. Release record: PR #47 required check RED: test; PRs #47-#50 open, none merged (gh pr view 50: OPEN). |
 | 2026-10-31 | TTC-2 | unreachable | dependency TTC-1 failed |
 | 2026-10-31 | INIT-0007 | completion | blocked: TTC-1 failed, TTC-2 unreachable; acceptance checks not run (no unit merged) |
+| 2026-11-01 | TTC-1 | re-dispatched (human-authorised) | owner ran `factory progress reset --item TTC-1` (04:34:03Z) and approved the backstop merge of PR #50 pinned to reviewed head ce9daad (merge fd66d58; GitHub marked #47-#49 merged); TTC-1 failed → eligible so its orchestrator records the merge and closes the ticket |
+| 2026-11-01 | TTC-2 | re-dispatched (human-authorised) | unreachable → not-eligible: its dependency TTC-1 is no longer failed |
 
 ## Completion
 
-blocked — TTC-1 failed (runaway SHIP dispatch, owner reset needed), TTC-2 unreachable. Acceptance checks not run: no ticket merged.
+pending — TTC-1 re-opened for SHIP close-out after the owner's runaway reset and backstop merge (2026-11-01).
