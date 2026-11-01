@@ -67,6 +67,30 @@ ttc postpone <id>
 - Two refusals, each exit 1 with nothing changed: a task with no due date (`ttc: task <id> has no due date`), and a task due `9999-12-31`, the latest date ttc stores (`ttc: task <id> cannot be postponed past 9999-12-31`).
 - It takes no other argument or option.
 
+## Changing a due date
+
+```
+ttc due <id> YYYY-MM-DD
+```
+
+- Sets the due date of an open or done task, with or without an existing due date.
+- The date must be `YYYY-MM-DD`, a real calendar date. Past dates are allowed; nothing later than `9999-12-31` is accepted. An invalid date is refused with `ttc: invalid date: <d>`.
+- Prints `Set due date of task <id> to <d>`.
+- Setting the date the task already has succeeds the same way.
+- Only the selected task's due date changes.
+
+Example: with task 1 already stored, run:
+
+```
+ttc due 1 2099-11-10
+```
+
+Output:
+
+```
+Set due date of task 1 to 2099-11-10
+```
+
 ## Cleaning out done tasks
 
 ```
