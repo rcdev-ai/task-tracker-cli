@@ -3,16 +3,16 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 7
+revision: 8
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 updated_by_role: ROLE-product-manager
 initiative: INIT-0007
-phase: READINESS
+phase: ENGINEERING_READY
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-product-readiness-reviewer: READINESS round 1 of 2 (terminal unless blocking) on REQ-0016 rev 4 and REQ-0017 rev 3"
+next_action: "ROLE-product-manager: ENGINEERING_READY — handoff packet and delivery manifest (product band)"
 blocked_by: []
 converged: true
 readiness_verdict: READY   # none | READY | READY-with-known-issues | NOT READY | void
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-READINESS. Convergence declared (`converged: true`): `REQ-0016` rev 4 and `REQ-0017` rev 3 accepted; coherence round 1 (terminal) `coherent`, its one non-blocking defect fixed; coverage validation zero defects. Readiness verdict pending.
+ENGINEERING_READY. Readiness round 1 `READY`, no conditions, no findings (Readiness log). Handoff packet and delivery manifest pending.
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-product-readiness-reviewer: READINESS round 1 of 2 (terminal unless blocking) on REQ-0016 rev 4 and REQ-0017 rev 3.
+ROLE-product-manager: ENGINEERING_READY — handoff packet and delivery manifest (product band).
 
 ## Blocked by
 
@@ -271,6 +271,7 @@ Dates are UTC timestamps.
 | 2026-11-01T03:52:00Z | SOLUTION_EXPLORATION | SOLUTION_CONVERGENCE | ROLE-product-manager | SOLUTION_EXPLORATION exit criteria met: options A and B recorded, each with a feasibility verdict (`feasible-with-constraints`) and a user-visible trade-off; PM recommends A with reasons | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_CONVERGENCE) holds: X1 two distinguishable options; X2 each verdict in the closed set (`technical/assessment.md` round 1); one Consultation log row for the one delegate response. No design dispatch: no visual surface (`project/constraints.md` row 8, `PD-0001` item 3; to be recorded in the convergence `PD-`, §9d.5). Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `d439134` |
 | 2026-11-01T04:05:00Z | SOLUTION_CONVERGENCE | DECOMPOSITION | ROLE-product-manager | SOLUTION_CONVERGENCE exit criteria met: one accepted `PD-0016` naming option A, B and five other shapes rejected with reasons, consequences accepted; indexed in the same commit; draft `REQ-0016`/`REQ-0017` rev 2 consistent with it; no option left under consideration; Solution Contract cites `PD-0016` and records no design concept (no visual surface, `PD-0016` item 14) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DECOMPOSITION) holds: exactly one `status: accepted` chosen-option `PD-` citing a non-`infeasible` verdict (`feasible-with-constraints`, `technical/assessment.md` round 1). HOOK-decision-capture R1 (index row, same commit), R3 (rejected options non-empty), D11 (decision counter 16 matches the highest id; `origin/main` at 15, no `PD-0016` there) pass. No escalation-class question: the option choice is settled by the request (escalation-policy §3 route 2, §4.1). Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `c7e34b5` |
 | 2026-11-01T04:30:00Z | DECOMPOSITION | READINESS | ROLE-product-manager | DECOMPOSITION exit criteria met: O1 -> accepted `REQ-0016` rev 4, O2 -> accepted `REQ-0017` rev 3, O3 -> both; each meets the nine points of §10.3 (accepted, one testable outcome, 11 and 10 pass/fail ACs, `CAP-0001`, no visual surface so no `DES-`, independently verifiable with `REQ-0017` `depends_on: [REQ-0016]` stated, no `blocker` `Q-`, no contradiction, indexed in the same commit); coherence round 1 (terminal) left no open blocking defect; convergence declared (`converged: true`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 READINESS) holds: `converged: true`; `HOOK-traceability` zero defects (Coverage validation, iteration 1); `technical/coherence.md` verdict `coherent`, round 1 terminal under §9d.3, D1 non-blocking and `fixed`; no user-facing story, so no `DES-` needed. AC texts for today's behaviour checked by the PM and by the architect on `node bin/ttc.js` at head `9d12abe`. Review budget this session: 1 of 6. Hooks: HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `3e90bc7` |
+| 2026-11-01T04:40:00Z | READINESS | ENGINEERING_READY | ROLE-product-manager | READINESS exit criteria met: `READY` recorded by ROLE-product-readiness-reviewer, round 1 of 2 declared terminal unless blocking; no conditions or known issues to record as `Q-`/`PD-` | Coverage validation zero defects ran before the dispatch (not a review dispatch; set unchanged since). Review budget used this session: 2 of 6 (coherence 1, readiness 1). `readiness_verdict: READY` set by the PM from the reviewer's Readiness log row (the dispatch limited its writes to the log row). Entry precondition (`lifecycle-hooks.md` §3.4.1 ENGINEERING_READY) holds: verdict `READY`, not `void`, digest `(REQ-0016, 4, 2026-10-31), (REQ-0017, 3, 2026-10-31)`; INIT-0007 rev 3 matches disk. Reviewer's non-finding note (`REQ-0017` AC-10 "the `REQ-0016` tests still pass" beside the usage line `REQ-0017` changes) is covered by `PD-0016` item 12 and `REQ-0017` AC-8/AC-10; carried as a handoff note, no story edit. Hooks: HOOK-readiness pass, HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `6c76dbc` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
