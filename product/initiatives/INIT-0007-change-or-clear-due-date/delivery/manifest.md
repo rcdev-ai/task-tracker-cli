@@ -7,14 +7,14 @@ revision: 1
 owner_role: ROLE-orchestrator
 created: 2026-10-31
 updated: 2026-10-31
-updated_by_role: ROLE-product-manager
+updated_by_role: ROLE-orchestrator
 initiative: INIT-0007
 manifest_version: 1
-band_owner: product
+band_owner: delivery
 issued_on: 2026-10-31
 issued_from_verdict: READY@2026-10-31
 story_set_digest: "REQ-0016@4/2026-10-31; REQ-0017@3/2026-10-31; INIT-0007@3"
-accepted_on: none
+accepted_on: 2026-10-31
 dispatch_unit: ticket
 max_parallelism: 5
 completion: pending
@@ -69,16 +69,21 @@ stories: [REQ-0016, REQ-0017]
 
 | Unit | Stories | Depends on | State | Attempts | Last outcome | Dispatch ref | Wave | Updated |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TTC-1 | REQ-0016 | none | eligible | 0 | none | none | 0 | 2026-10-31 |
+| TTC-2 | REQ-0017 | TTC-1 | not-eligible | 0 | none | none | 1 | 2026-10-31 |
 
 ## Waves
 
 | Wave | Units | Eligible-now count |
 | --- | --- | --- |
+| 0 | TTC-1 | 1 |
+| 1 | TTC-2 | 0 |
 
 ## Dispatch ledger
 
 | Date | Unit | Event | Detail |
 | --- | --- | --- | --- |
+| 2026-10-31 | INIT-0007 | accepted | band_owner delivery; cap 5 (manifest max_parallelism) |
 
 ## Completion
 
