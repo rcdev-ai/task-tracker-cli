@@ -3,7 +3,7 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 9
+revision: 10
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
@@ -12,7 +12,7 @@ initiative: INIT-0007
 phase: HANDOFF
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-product-manager: HANDOFF — create the Ariadne tickets for REQ-0016 and REQ-0017 (TTC), REQ-0017 blocked by REQ-0016, and write delivery/tickets.md"
+next_action: "ROLE-orchestrator: deliver TTC-1, then TTC-2 (blocked by TTC-1); one ticket_code each, dispatched by a human or a fan-out session. Product side done at HANDOFF; ROLE-product-manager re-enters only on a regression trigger or at initiative close"
 blocked_by: []
 converged: true
 readiness_verdict: READY   # none | READY | READY-with-known-issues | NOT READY | void
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-HANDOFF. Handoff packet assembled; `delivery/manifest.md` issued at `band_owner: product` against `READY@2026-10-31`; INIT-0007 `active`; both stories `engineering-ready`. Tickets pending.
+HANDOFF. Option A chosen (`PD-0016`); `REQ-0016` rev 4 and `REQ-0017` rev 3 accepted and engineering-ready (`READY`, round 1); Handoff packet and `delivery/manifest.md` (product band) issued; `REQ-0016` → `TTC-1`, `REQ-0017` → `TTC-2` blocked by `TTC-1` (Ariadne project TTC, Backlog) in `delivery/tickets.md`. Engineering not dispatched by this session.
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-product-manager: HANDOFF — create the Ariadne tickets for REQ-0016 and REQ-0017 (TTC), REQ-0017 blocked by REQ-0016, and write delivery/tickets.md.
+ROLE-orchestrator: deliver TTC-1, then TTC-2 (blocked by TTC-1); one ticket_code each, dispatched by a human or a fan-out session. Product side done at HANDOFF; ROLE-product-manager re-enters only on a regression trigger or at initiative close.
 
 ## Blocked by
 
@@ -184,6 +184,7 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 - `SOLUTION_EXPLORATION | ROLE-planner | claude | opus | L (subagent reported 118,819 tokens, 27 tool uses, 297 s) | a280b3f2c9fb135f8 | technical/capability-scan.md, impact.md, assessment.md`
 - `DECOMPOSITION | ROLE-planner | claude | opus | L (subagent reported 102,797 tokens, 21 tool uses, 232 s) | a035d5bba65351af1 | technical/coherence.md (round 1)`
 - `READINESS | ROLE-product-readiness-reviewer | claude | sonnet | M (subagent reported 86,335 tokens, 17 tool uses, 86 s) | adff31148a2cb4421 | Readiness log row 1 (READY)`
+- `HANDOFF | ticket-transcriber (create-tickets-from-stories §2) | claude | sonnet | M (subagent reported 80,552 tokens, 11 tool uses, 174 s) | a0aad2ce43dd91920 | scratch ticket bodies for TTC-1 and TTC-2 (transcription only)`
 
 ## Escalation log
 
@@ -280,12 +281,13 @@ Assembled 2026-10-31 at ENGINEERING_READY by `ROLE-product-manager` against the 
 - **Open questions (non-blocking):** none. The verdict carries no conditions or known issues.
 - **Note for delivery:** `REQ-0017` changes the `ttc due` usage line that `REQ-0016` AC-9 asserts; "the `REQ-0016` tests still pass" in `REQ-0017` AC-10 means with the whole-usage assertions carrying the new line (`REQ-0017` AC-8, `PD-0016` items 10, 12).
 - **Delivery manifest:** `product/initiatives/INIT-0007-change-or-clear-due-date/delivery/manifest.md`
-- **Tickets** (Ariadne project TTC, `PD-0015`; mapping authority `delivery/tickets.md`): written at HANDOFF.
+- **Tickets** (Ariadne project TTC, `PD-0015`; mapping authority `delivery/tickets.md`): `REQ-0016` → `TTC-1`; `REQ-0017` → `TTC-2`, blocked by `TTC-1` (Ariadne `blockedBy`/`blocks` relation).
 
 ## Handoff log
 
 | Date | Receiving role | Packet digest | Note |
 | --- | --- | --- | --- |
+| 2026-10-31 | ROLE-orchestrator (one `ticket_code` each; no engineering dispatched by this session) | `c15ec2e944a2b7ed` (sha256 of the packet section, first 16 hex) | Tickets `TTC-1` (`REQ-0016`) and `TTC-2` (`REQ-0017`) in Ariadne project TTC (Task Tracker CLI), status Backlog (Ariadne default, not set), created 2026-11-01T04:01:55Z and 04:02:31Z; `TTC-2` created with `blockedBy: [TTC-1]`, and `get_ticket TTC-1` shows `blocks: [TTC-2]`. Idempotency: no `delivery/tickets.md` existed for INIT-0007; `list_tickets` in project TTC (query "due date") returned 17 tickets, none with either title. Transcription by the Sonnet child (run `a0aad2ce43dd91920`), verified by the PM with a script against the story files: titles equal the story titles; X13 six mapped sections only (Problem, Scope, Out of scope, Acceptance criteria, Success metric, Dependencies); X5 11 of 11 and 10 of 10 criteria, each identical to the story after only the listed translations; X12 0 matches on title and body after the key substitution. X14 translations: `REQ-0016` AC-11 "written from `PD-0016`, not from the new code (C5)" → "written from the decided rules, not from the new code" and "(`PD-0016` item 12)" deleted as attributive; `REQ-0017` AC-9 and AC-10 `REQ-0016` → `TTC-1` (load-bearing), AC-10 "written from `PD-0016` … (C5)" → "written from the decided rules". Other translations: Scope drops the `PD-0016` item and `project/constraints.md` row 9 citations; `TTC-1` Out of scope "`REQ-0017`" → "a separate later ticket that depends on this one", `TTC-2` Out of scope "Setting a due date: `REQ-0016`" → `TTC-1`, "(option B, `PD-0016` item 13)" dropped, and both inline the initiative's six out-of-scope items plus the option B exclusion; Success metric inlines O1/O3 (`TTC-1`) or O2/O3 (`TTC-2`) and the matching success measures without numbering or citation; Dependencies: `TTC-1` none, `TTC-2` "Blocked by TTC-1" (key known at creation, so no §4b backfill needed), each followed by its binding constraints (C1–C7, C9, C10 for `TTC-1`; the same without C2 for `TTC-2`) without labels or `PD-` citations. No `DES-`, so no `design/` copy (X10). Global `synced_on` not bumped: only the new rows were synced, the other rows' statuses were not re-read |
 
 ## Phase log
 
@@ -303,6 +305,7 @@ Dates are UTC timestamps.
 | 2026-11-01T04:30:00Z | DECOMPOSITION | READINESS | ROLE-product-manager | DECOMPOSITION exit criteria met: O1 -> accepted `REQ-0016` rev 4, O2 -> accepted `REQ-0017` rev 3, O3 -> both; each meets the nine points of §10.3 (accepted, one testable outcome, 11 and 10 pass/fail ACs, `CAP-0001`, no visual surface so no `DES-`, independently verifiable with `REQ-0017` `depends_on: [REQ-0016]` stated, no `blocker` `Q-`, no contradiction, indexed in the same commit); coherence round 1 (terminal) left no open blocking defect; convergence declared (`converged: true`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 READINESS) holds: `converged: true`; `HOOK-traceability` zero defects (Coverage validation, iteration 1); `technical/coherence.md` verdict `coherent`, round 1 terminal under §9d.3, D1 non-blocking and `fixed`; no user-facing story, so no `DES-` needed. AC texts for today's behaviour checked by the PM and by the architect on `node bin/ttc.js` at head `9d12abe`. Review budget this session: 1 of 6. Hooks: HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `3e90bc7` |
 | 2026-11-01T04:40:00Z | READINESS | ENGINEERING_READY | ROLE-product-manager | READINESS exit criteria met: `READY` recorded by ROLE-product-readiness-reviewer, round 1 of 2 declared terminal unless blocking; no conditions or known issues to record as `Q-`/`PD-` | Coverage validation zero defects ran before the dispatch (not a review dispatch; set unchanged since). Review budget used this session: 2 of 6 (coherence 1, readiness 1). `readiness_verdict: READY` set by the PM from the reviewer's Readiness log row (the dispatch limited its writes to the log row). Entry precondition (`lifecycle-hooks.md` §3.4.1 ENGINEERING_READY) holds: verdict `READY`, not `void`, digest `(REQ-0016, 4, 2026-10-31), (REQ-0017, 3, 2026-10-31)`; INIT-0007 rev 3 matches disk. Reviewer's non-finding note (`REQ-0017` AC-10 "the `REQ-0016` tests still pass" beside the usage line `REQ-0017` changes) is covered by `PD-0016` item 12 and `REQ-0017` AC-8/AC-10; carried as a handoff note, no story edit. Hooks: HOOK-readiness pass, HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `6c76dbc` |
 | 2026-11-01T04:50:00Z | ENGINEERING_READY | HANDOFF | ROLE-product-manager | ENGINEERING_READY exit criteria met: handoff packet self-contained (outcome, stories in sequence, no `DES-`, decisions, C1–C7, C9, C10, out of scope, no open questions, manifest path); `delivery/manifest.md` at `band_owner: product`, `issued_from_verdict: READY@2026-10-31`, digest `REQ-0016@4/2026-10-31; REQ-0017@3/2026-10-31; INIT-0007@3`, M1–M8 hold (graph `REQ-0016 -> REQ-0017` acyclic, waves 0 and 1, every identifier resolves, no plan or estimate); INIT-0007 `status: active` (index too); `REQ-0016`, `REQ-0017` `readiness: engineering-ready` | Entry precondition (`lifecycle-hooks.md` §3.4.1 HANDOFF) holds: H7 every packet bullet populated or explicit empty form; H12 manifest issued against the same verdict and digest. No story changed since the verdict (readiness field only, no revision change). Hooks: HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `02ef7d2` |
+| 2026-11-01T04:04:00Z | HANDOFF | HANDOFF | ROLE-product-manager | HANDOFF exit criteria met: Handoff log row written, phase `HANDOFF`, accepted `REQ-0016` resolves to `TTC-1` and `REQ-0017` to `TTC-2`, `TTC-2` blocked by `TTC-1` in Ariadne | `SKILL-create-tickets-from-stories` X1–X14 verified by the PM (Handoff log). No review re-run. `delivery/state.md` not written; ROLE-orchestrator not dispatched by this session. Review budget used this session: 2 of 6. Requester questions asked: 0. Time correction: the three rows above stamped 04:30, 04:40 and 04:50 carry estimated times; their commits `d512002`, `02ef7d2` and `77863b0` were made at 03:52, 03:55 and 03:56 UTC; those rows are left as written. Hooks: HOOK-handoff-conformance pass (H13: `TTC-1`, `TTC-2` from the Ariadne responses) | `fb6dac4630751802` (carried), head `77863b0` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
