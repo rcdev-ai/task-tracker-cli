@@ -3,16 +3,16 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 2
+revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 updated_by_role: ROLE-product-manager
 initiative: INIT-0007
-phase: DISCOVERY
+phase: PRODUCT_DEFINITION
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-product-manager: SKILL-advance-product-phase DISCOVERY -> PRODUCT_DEFINITION"
+next_action: "ROLE-product-manager: PRODUCT_DEFINITION — populate initiative.md, draft REQ-, Product Definition Contract"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-DISCOVERY. Discovery written: target user, jobs J1–J3, problems P1–P4 with sources, `CAP-0001` mapping, success signals 1–4, known non-goals. No delegate consulted; no `Q-` raised.
+PRODUCT_DEFINITION. Discovery complete (J1–J3, P1–P4, `CAP-0001`, signals 1–4, non-goals).
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-product-manager: SKILL-advance-product-phase DISCOVERY -> PRODUCT_DEFINITION.
+ROLE-product-manager: PRODUCT_DEFINITION — populate initiative.md, draft REQ-, Product Definition Contract.
 
 ## Blocked by
 
@@ -204,6 +204,7 @@ Dates are UTC timestamps.
 | 2026-11-01T03:24:00Z | — | BOOTSTRAP | ROLE-product-manager | Raw request relayed by the driving session | Packet: `readiness: ready`, `scope.initiative: null`, profile S, no areas, no open `Q-` (`Q-0001` answered). `neighbouring` read in full: `CAP-0001` (draft) has no command that sets or removes an existing task's due date; no `PD-` (accepted or rejected) decides against one; `PD-0003` items 2, 5, 6, 9–12, `PD-0004`, `PD-0008`, `PD-0010`, `PD-0011` (postpone), `PD-0013` (copy `--due`) and `PD-0014` (`--no-due`) bind or neighbour it; `PD-0003` Consequences "No way to change a due date" and the out-of-scope lines of INIT-0001/0003/0005/0006 are scope boundaries, not a rejected decision. INIT-0001..INIT-0006 are not touched. Advisory, carried: `CAP-0001` is still draft and predates shipped behaviour (code and README at head `1084f0a` are the current-state evidence); `delivery/tickets.md` mirror `synced_on` 2026-10-21 is stale; the working tree has an uncommitted edit to `INIT-0005/delivery/tickets.md` owned by another session, left alone. Tracker bound to Ariadne project TTC (`PD-0015`). Hooks: HOOK-canonical-root pass, HOOK-hydrate pass | `fb6dac4630751802`, head `1084f0a` |
 | 2026-11-01T03:28:21Z | BOOTSTRAP | INTAKE | ROLE-product-manager | Packet emitted, scope resolved to none | Triage verdict `new-initiative`: not `satisfied-by CAP-0001` (no command sets or removes an existing task's due date; `ttc due` is an unknown command at head `1084f0a`); no `PD-` settles it (A13); no constraint forbids it; no initiative covers it (INIT-0001 base commands, INIT-0002 important mark, INIT-0003 postpone, INIT-0004 clean, INIT-0005 copy, INIT-0006 `--no-due`; each lists changing or clearing a due date out of scope), so not a duplicate; one outcome named. Raw request committed verbatim. `INIT-0007` allocated (counter 6 -> 7, checked against `origin/main` `1084f0a`). Size: small (≤3 stories expected; the driving session asks for one or two). Hooks: HOOK-initiative-resolved pass, HOOK-phase-entry pass | `fb6dac4630751802`, head `1084f0a` |
 | 2026-11-01T03:33:00Z | INTAKE | DISCOVERY | ROLE-product-manager | INTAKE exit criteria met: one initiative, one problem, one named requester, ambiguity rows A1–A13 all classified (`pm-resolvable`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DISCOVERY) holds: `initiative.md` at `status: draft`; state at INTAKE with requester, problem statement and a classified ambiguity log. Discovery written (J1–J3, P1–P4, S2 `CAP-0001`, S3 signals 1–4, non-goals). No delegate consulted (optional, read-only; the code and README answer the current state). No `Q-` raised. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `aceeb99` |
+| 2026-11-01T03:34:00Z | DISCOVERY | PRODUCT_DEFINITION | ROLE-product-manager | DISCOVERY exit criteria met: problem, user, current state and success signals stated with sources; no open escalation-class ambiguity | Entry precondition (`lifecycle-hooks.md` §3.4.1 PRODUCT_DEFINITION) holds: Discovery has the target user, jobs J1–J3 and problems P1–P4 each with a source (S1), mapping `CAP-0001` (S2), success signals 1–4 (S3) and known non-goals. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `429444c` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
