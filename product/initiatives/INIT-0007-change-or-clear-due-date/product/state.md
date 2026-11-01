@@ -14,7 +14,7 @@ phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
 next_action: "ROLE-product-manager: DECOMPOSITION — write behavior and acceptance criteria for REQ-0016 and REQ-0017, then the coherence check"
 blocked_by: []
-converged: false
+converged: true
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
 stories: [REQ-0016, REQ-0017]
 design_refs: []
@@ -177,10 +177,12 @@ recommended (`PD-0016` items 1–16). No option is left under consideration.
 | Date | Delegate role | Question | Answer / verdict | Recorded as |
 | --- | --- | --- | --- | --- |
 | 2026-10-31 | ROLE-planner (PRODUCT-DISCOVERY) | Feasibility verdict, constraints, risks and band for options A and B, plus recommendations on N1–N6 (one dispatch: capability scan, impact, assessment; §9d.1) | A `feasible-with-constraints`, `contained`; B `feasible-with-constraints`, `contained`; constraints C1–C10 (C8 B only, C9 A only); risks R1–R5 (R5 B only); assumptions P1–P6 all narrowing, none blocking or costly; no stored-format change (C3, N6). N1 normal success line that writes (R4: an older file becomes version 4); N2 `Task <id> has no due date`, exit 0, no write; N3 one usage line after `ttc postpone <id>`, extended by `REQ-0017`; N4 `note`'s check order, date check last before the lock; N5 split sound, `REQ-0016` must not assert the `--clear` refusal and must fix no bare-id text; N6 no format change. Registry note: `CAP-0001` out of date (as in INIT-0002..0006), left for initiative close | `technical/capability-scan.md`, `technical/impact.md`, `technical/assessment.md` (round 1); this row; C1–C7, C9, C10, N1–N6 go to the convergence `PD-`. Vendor claude, model opus |
+| 2026-10-31 | ROLE-planner (PRODUCT-DISCOVERY) | Story-set technical coherence, full pass, on the draft set `REQ-0016` rev 3 and `REQ-0017` rev 3 against `PD-0016` and `technical/assessment.md` round 1; declared round 1 of 2, terminal unless it reports a blocking defect (§9d.3, §9a.1) | `coherent`; one non-blocking defect D1 (`REQ-0016` check order read alone puts the no-date error before the id check, against `PD-0016` item 6; no AC fixes `ttc due abc`); no `Q-`. Independence, sequencing, assumed capability and verdict drift all pass; every AC text and check order resting on today's behaviour checked against `node bin/ttc.js` at head `9d12abe`. Round 1 terminal: no round 2. D1 `fixed` inline by the PM (`REQ-0016` rev 4, Behavior "Check order" states the no-date check comes after the id), no re-review (§9d.3) | `technical/coherence.md` (round 1); this row. Vendor claude, model opus |
 
 Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | artifact produced`
 
 - `SOLUTION_EXPLORATION | ROLE-planner | claude | opus | L (subagent reported 118,819 tokens, 27 tool uses, 297 s) | a280b3f2c9fb135f8 | technical/capability-scan.md, impact.md, assessment.md`
+- `DECOMPOSITION | ROLE-planner | claude | opus | L (subagent reported 102,797 tokens, 21 tool uses, 232 s) | a035d5bba65351af1 | technical/coherence.md (round 1)`
 
 ## Escalation log
 
@@ -191,8 +193,35 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
-| REQ-0016 | A task's due date is set to a chosen date in one short command | draft (rev 2) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
-| REQ-0017 | A task's due date is removed in one short command | draft (rev 2) | CAP-0001 | none — no user-facing visual surface | after REQ-0016 (adds the removing form to the command REQ-0016 introduces) |
+| REQ-0016 | A task's due date is set to a chosen date in one short command | accepted (rev 4) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
+| REQ-0017 | A task's due date is removed in one short command | accepted (rev 3) | CAP-0001 | none — no user-facing visual surface | after REQ-0016 (adds the removing form to the command REQ-0016 introduces) |
+
+## Coverage validation
+
+`SKILL-validate-requirement-coverage`, full mode, run by ROLE-product-manager on
+2026-10-31 against the set on disk (iteration 1: zero defects). Story-set digest:
+`(REQ-0016, 4, 2026-10-31), (REQ-0017, 3, 2026-10-31)`; `INIT-0007` revision 3.
+
+Traceability map: O1 (`initiative.md` Outcome) -> `REQ-0016`; O2 -> `REQ-0017`;
+O3 -> both (each `outcome_element` names it) -> `CAP-0001` (resolves) -> no `DES-`
+(no visual surface, `PD-0016` item 14) -> `PD-0003`, `PD-0004`, `PD-0008`,
+`PD-0010`, `PD-0011`, `PD-0013`, `PD-0014`, `PD-0016` (all `accepted`, all
+indexed) -> no `Q-` open -> no tickets yet.
+
+| Rule | Result | Evidence |
+| --- | --- | --- |
+| R1 | pass | O1 -> accepted `REQ-0016` (AC-1 open task with a due date, AC-2 a task with none, AC-3 a done task and a past date, AC-4 the same date); O2 -> accepted `REQ-0017` (AC-1 open task, AC-2 done task, AC-3 nothing to remove); O3 -> both (`REQ-0016` AC-3, AC-5 and `REQ-0017` AC-1, AC-2, AC-5 only the due date changes and what follows from it; AC-4 older files; AC-9 / AC-8 help changes only by the `ttc due` line) |
+| R2 | pass | `REQ-0016`, `REQ-0017`: id = filename = index row (`requirements/index.md`, `accepted`); counter `requirement: 17`; no renumbering; edits are pre-freeze plain edits |
+| R3 | pass | each `outcome_element` names its O-elements; `CAP-0001` resolves in `capabilities/index.md` |
+| R4 | pass | No user-facing visual surface (`PD-0016` item 14); `design_refs: []` on both; no `DES-` on the initiative |
+| R5 | pass | `REQ-0016` 11 and `REQ-0017` 10 acceptance entries, each a command trigger and exact output, exit code or file state; the README and `npm test`/CI entries name observable content |
+| R6 | pass | `REQ-0016` `depends_on: [none]`; `REQ-0017` `depends_on: [REQ-0016]`, resolves |
+| R7 | pass | Stories table: `REQ-0016` `none — on the frontier`, `REQ-0017` `after REQ-0016`; graph `REQ-0016 -> REQ-0017`, acyclic |
+| R8 | pass | No `blocker` `Q-`; Ambiguity log A1–A13 all `pm-resolvable`; no contradiction found between either story and an accepted `PD-` or `constraints.md` (flag-only) |
+| R9 | pass | `PD-0016` cites `feasible-with-constraints`; coherence verdict `coherent` recorded in the Consultation log, round 1 terminal (no blocking defect); its one non-blocking defect D1 dispositioned `fixed` |
+| R10 | pass | Every `decisions:` entry is `accepted`; `REQ-0017` depends on accepted `REQ-0016`; no open `Q-` |
+| R11 | pass | Out of scope has 6 items; both stories' Non-goals mirror them; no AC exercises excluded behaviour (`REQ-0016` AC-6 checks `tomorrow` is refused; no AC changes `ttc add`, `ttc postpone` or `ttc copy`, sorts by due date, or changes several tasks) |
+| R12 | pass | `INIT-0007`, `REQ-0016`, `REQ-0017`, `CAP-0001`, `PD-0003/0004/0008/0010/0011/0013/0014/0016` resolve through their indexes; file, `id`, frontmatter and index rows agree |
 
 ## Readiness log
 

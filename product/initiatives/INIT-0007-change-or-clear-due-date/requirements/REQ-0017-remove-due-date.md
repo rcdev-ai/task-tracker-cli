@@ -2,7 +2,7 @@
 id: REQ-0017
 type: requirement
 title: A task's due date is removed in one short command
-status: draft
+status: accepted
 revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-31

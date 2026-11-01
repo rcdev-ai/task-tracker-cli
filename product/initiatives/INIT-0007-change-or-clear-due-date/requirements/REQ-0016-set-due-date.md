@@ -2,8 +2,8 @@
 id: REQ-0016
 type: requirement
 title: A task's due date is set to a chosen date in one short command
-status: draft
-revision: 3
+status: accepted
+revision: 4
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
@@ -82,8 +82,9 @@ The rules are `PD-0016`; this section states what the user sees.
   date is an argument error too: one line starting `ttc: `, exit 1, nothing
   changed; this story fixes no wording for it (items 1, 12).
 - **Check order.** Before the lock and the read: argument errors, in the
-  order typed; the id (`ttc: invalid task id: <arg>`); the date
-  (`ttc: invalid date: <d>`). Then under the lock: read the list
+  order typed; the id (`ttc: invalid task id: <arg>`); no date given (the
+  `ttc due <id>` error above, checked after the id, so `ttc due abc` reports
+  the id); the date (`ttc: invalid date: <d>`). Then under the lock: read the list
   (`ttc: cannot read <path>: <reason>`), find the task
   (`ttc: no task with id <id>`), set. The first failing check is reported
   (item 6).
