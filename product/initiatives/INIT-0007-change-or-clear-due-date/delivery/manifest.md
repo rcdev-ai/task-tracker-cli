@@ -17,7 +17,7 @@ story_set_digest: "REQ-0016@4/2026-10-31; REQ-0017@3/2026-10-31; INIT-0007@3"
 accepted_on: 2026-10-31
 dispatch_unit: ticket
 max_parallelism: 5
-completion: pending
+completion: complete
 stories: [REQ-0016, REQ-0017]
 ---
 
@@ -69,8 +69,8 @@ stories: [REQ-0016, REQ-0017]
 
 | Unit | Stories | Depends on | State | Attempts | Last outcome | Dispatch ref | Wave | Updated |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TTC-1 | REQ-0016 | none | eligible | 1 | BLOCKED: TTC-1 — runaway: the third SHIP dispatch was refused (code 40). | INIT-0007 wrapper_pid=39612; PR #50 merged fd66d58 (backstop), #47-#49 merged | 0 | 2026-11-01 |
-| TTC-2 | REQ-0017 | TTC-1 | not-eligible | 0 | none | none | 1 | 2026-10-31 |
+| TTC-1 | REQ-0016 | none | complete | 2 | DONE — release.md Status: merged; PR #47-#50 MERGED (gh pr view), merge commit fd66d58 | INIT-0007 wrapper_pid=39612, relaunch wrapper_pid=99523; PR #50 merged fd66d58 (backstop), #47-#49 merged | 0 | 2026-11-01 |
+| TTC-2 | REQ-0017 | TTC-1 | complete | 1 | DONE — TTC-2 shipped: release.md Status: merged; PRs #51, #53, #57, #58 MERGED (gh pr view; #52 closed, replaced by #57), last merge 7779356 | INIT-0007 wrapper_pid=3689; PRs #51/#53/#57/#58 | 1 | 2026-11-01 |
 
 ## Waves
 
@@ -90,7 +90,11 @@ stories: [REQ-0016, REQ-0017]
 | 2026-10-31 | INIT-0007 | completion | blocked: TTC-1 failed, TTC-2 unreachable; acceptance checks not run (no unit merged) |
 | 2026-11-01 | TTC-1 | re-dispatched (human-authorised) | owner ran `factory progress reset --item TTC-1` (04:34:03Z) and approved the backstop merge of PR #50 pinned to reviewed head ce9daad (merge fd66d58; GitHub marked #47-#49 merged); TTC-1 failed → eligible so its orchestrator records the merge and closes the ticket |
 | 2026-11-01 | TTC-2 | re-dispatched (human-authorised) | unreachable → not-eligible: its dependency TTC-1 is no longer failed |
+| 2026-11-01 | TTC-1 | dispatched | relaunch for SHIP close-out; launcher wrapper_pid=99523 |
+| 2026-11-01 | TTC-1 | completed | PRs #47-#50 MERGED as read from GitHub; merge fd66d58 (backstop; not M1) |
+| 2026-11-01 | TTC-2 | dispatched | cap 5 (manifest max_parallelism) |
+| 2026-11-01 | TTC-2 | completed | PRs #51, #53, #57, #58 MERGED as read from GitHub; last merge commit 7779356 |
+| 2026-11-01 | INIT-0007 | acceptance | 91 rows in delivery/acceptance.md, 0 fail (clean checkout of origin/main 7779356; npm test 530/530 + perf 4/4) |
+| 2026-11-01 | INIT-0007 | completion | complete: TTC-1 and TTC-2 merged; TTC-1 via owner-approved backstop merge (not M1) |
 
-## Completion
-
-pending — TTC-1 re-opened for SHIP close-out after the owner's runaway reset and backstop merge (2026-11-01).
+complete — both units merged; acceptance checks pass (`delivery/acceptance.md`); completed 2026-11-01.
