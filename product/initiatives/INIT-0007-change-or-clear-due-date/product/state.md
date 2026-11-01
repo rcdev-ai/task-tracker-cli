@@ -3,20 +3,20 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 3
+revision: 4
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 updated_by_role: ROLE-product-manager
 initiative: INIT-0007
-phase: PRODUCT_DEFINITION
+phase: SOLUTION_EXPLORATION
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-product-manager: PRODUCT_DEFINITION — populate initiative.md, draft REQ-, Product Definition Contract"
+next_action: "ROLE-planner (PRODUCT-DISCOVERY): feasibility verdicts for options A and B (capability scan, impact, assessment in one dispatch, §9d.1)"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
-stories: []
+stories: [REQ-0016, REQ-0017]
 design_refs: []
 decisions: []
 ---
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-PRODUCT_DEFINITION. Discovery complete (J1–J3, P1–P4, `CAP-0001`, signals 1–4, non-goals).
+SOLUTION_EXPLORATION. `initiative.md` rev 2 (O1–O3, 6 out-of-scope items, success measures 1–6); draft `REQ-0016` (set) and `REQ-0017` (remove, after `REQ-0016`); Product Definition Contract accepted. Options A and B framed; architect feasibility pending.
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-product-manager: PRODUCT_DEFINITION — populate initiative.md, draft REQ-, Product Definition Contract.
+ROLE-planner (PRODUCT-DISCOVERY): feasibility verdicts for options A and B (capability scan, impact, assessment in one dispatch, §9d.1).
 
 ## Blocked by
 
@@ -162,6 +162,8 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
+| REQ-0016 | A task's due date is set to a chosen date in one short command | draft (rev 1) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
+| REQ-0017 | A task's due date is removed in one short command | draft (rev 1) | CAP-0001 | none — no user-facing visual surface | after REQ-0016 (adds the removing form to the command REQ-0016 introduces) |
 
 ## Readiness log
 
@@ -205,6 +207,7 @@ Dates are UTC timestamps.
 | 2026-11-01T03:28:21Z | BOOTSTRAP | INTAKE | ROLE-product-manager | Packet emitted, scope resolved to none | Triage verdict `new-initiative`: not `satisfied-by CAP-0001` (no command sets or removes an existing task's due date; `ttc due` is an unknown command at head `1084f0a`); no `PD-` settles it (A13); no constraint forbids it; no initiative covers it (INIT-0001 base commands, INIT-0002 important mark, INIT-0003 postpone, INIT-0004 clean, INIT-0005 copy, INIT-0006 `--no-due`; each lists changing or clearing a due date out of scope), so not a duplicate; one outcome named. Raw request committed verbatim. `INIT-0007` allocated (counter 6 -> 7, checked against `origin/main` `1084f0a`). Size: small (≤3 stories expected; the driving session asks for one or two). Hooks: HOOK-initiative-resolved pass, HOOK-phase-entry pass | `fb6dac4630751802`, head `1084f0a` |
 | 2026-11-01T03:33:00Z | INTAKE | DISCOVERY | ROLE-product-manager | INTAKE exit criteria met: one initiative, one problem, one named requester, ambiguity rows A1–A13 all classified (`pm-resolvable`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DISCOVERY) holds: `initiative.md` at `status: draft`; state at INTAKE with requester, problem statement and a classified ambiguity log. Discovery written (J1–J3, P1–P4, S2 `CAP-0001`, S3 signals 1–4, non-goals). No delegate consulted (optional, read-only; the code and README answer the current state). No `Q-` raised. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `aceeb99` |
 | 2026-11-01T03:34:00Z | DISCOVERY | PRODUCT_DEFINITION | ROLE-product-manager | DISCOVERY exit criteria met: problem, user, current state and success signals stated with sources; no open escalation-class ambiguity | Entry precondition (`lifecycle-hooks.md` §3.4.1 PRODUCT_DEFINITION) holds: Discovery has the target user, jobs J1–J3 and problems P1–P4 each with a source (S1), mapping `CAP-0001` (S2), success signals 1–4 (S3) and known non-goals. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `429444c` |
+| 2026-11-01T03:40:00Z | PRODUCT_DEFINITION | SOLUTION_EXPLORATION | ROLE-product-manager | PRODUCT_DEFINITION exit criteria met: outcome O1–O3, out of scope (6 items), success measures 1–6, draft `REQ-0016` and `REQ-0017` covering O1–O3, Product Definition Contract citing the raw request | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_EXPLORATION) holds: F1 `initiative.md` rev 2 has an outcome and a non-empty out-of-scope section; two `status: draft` `REQ-`; F2 draft-mode coverage (inline, deterministic): J1 -> `REQ-0016` Requirement ("give an existing task a due date they type"), J2 -> `REQ-0017` Requirement ("remove an existing task's due date"), J3 -> both ("one short command"); no `R1` defect. Story split (§4.1): one testable outcome each; `REQ-0017` `depends_on: [REQ-0016]` (it adds the removing form to the command `REQ-0016` introduces). `requirement` counter 15 -> 17, checked against `origin/main`. No scope `PD-` needed yet: A1, A4–A8 and A13 are recorded in the chosen-option `PD-`. Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `5e0468d` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
