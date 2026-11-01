@@ -1,10 +1,19 @@
 'use strict';
 
+const fs = require('node:fs');
+const path = require('node:path');
+const { parseArgs } = require('./args');
 const { oneLine, failureLine } = require('./errors');
 const commands = require('./commands');
 
 function run(argv, { stdout, stderr }) {
   try {
+    if (argv[0] === '--version') {
+      parseArgs(argv.slice(1), { positionals: [], options: {} });
+      const { version } = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+      stdout.write(version + '\n');
+      return 0;
+    }
     let name = argv[0];
     let args = argv.slice(1);
     if (argv.length === 0 || argv[0] === '--help') name = 'help';
