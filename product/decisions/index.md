@@ -7,6 +7,7 @@ not re-open the question.
 
 | ID | Title | Status | Path | Updated |
 | --- | --- | --- | --- | --- |
+| PD-0016 | Build INIT-0007 as option A, ttc due sets a task's due date to a typed date or removes it with --clear | accepted | [PD-0016-ttc-due-option-a.md](PD-0016-ttc-due-option-a.md) | 2026-10-31 |
 | PD-0015 | The ttc tickets live in the Ariadne project TTC | accepted | [PD-0015-ttc-tickets-live-in-ariadne.md](PD-0015-ttc-tickets-live-in-ariadne.md) | 2026-10-31 |
 | PD-0014 | Build INIT-0006 as option B, ttc list --no-due narrows any view to tasks with no due date, and ttc export takes it too | accepted | [PD-0014-ttc-no-due-filter-option-b.md](PD-0014-ttc-no-due-filter-option-b.md) | 2026-10-29 |
 | PD-0013 | Build INIT-0005 as option B, ttc copy makes a new open task from an existing one and can give it a different due date | accepted | [PD-0013-ttc-copy-option-b.md](PD-0013-ttc-copy-option-b.md) | 2026-10-29 |

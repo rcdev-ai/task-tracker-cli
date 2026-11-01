@@ -3,14 +3,14 @@ id: INIT-0007
 type: initiative
 title: A task's due date is changed or removed in one short command
 status: draft
-revision: 2
+revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 capabilities: [CAP-0001]
 requirements: [REQ-0016, REQ-0017]
 tickets: []
-decisions: []
+decisions: [PD-0016]
 ---
 
 # INIT-0007 — A task's due date is changed or removed in one short command
@@ -101,3 +101,4 @@ None.
 | --- | --- | --- | --- |
 | 2026-10-31 | 1 | Created at INTAKE | Triage verdict `new-initiative` |
 | 2026-10-31 | 2 | Outcome O1–O3, scope, out of scope (6 items), success measures 1–6, `REQ-0016`, `REQ-0017` | PRODUCT_DEFINITION |
+| 2026-10-31 | 3 | `decisions: [PD-0016]`: option A chosen, no scope change | SOLUTION_CONVERGENCE |
