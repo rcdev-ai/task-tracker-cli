@@ -2,7 +2,7 @@
 id: INIT-0007
 type: initiative
 title: A task's due date is changed or removed in one short command
-status: draft
+status: active
 revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-31

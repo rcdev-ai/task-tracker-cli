@@ -27,7 +27,7 @@ depends_on: [REQ-0016]
 constraints: ["C1 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)", "C10 (technical/assessment.md, round 1)"]
 observability: []
 rollout: none
-readiness: not-assessed
+readiness: engineering-ready
 tickets: []
 supersedes:
 superseded_by:

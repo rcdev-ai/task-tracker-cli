@@ -3,16 +3,16 @@ id: PSTATE-INIT-0007
 type: product-state
 title: Product definition state for INIT-0007
 status: authoritative
-revision: 8
+revision: 9
 owner_role: ROLE-product-manager
 created: 2026-10-31
 updated: 2026-10-31
 updated_by_role: ROLE-product-manager
 initiative: INIT-0007
-phase: ENGINEERING_READY
+phase: HANDOFF
 phase_entered: 2026-10-31
 requester: "the requester (repository owner, rortegalizardo), via the driving session, 2026-10-31"
-next_action: "ROLE-product-manager: ENGINEERING_READY — handoff packet and delivery manifest (product band)"
+next_action: "ROLE-product-manager: HANDOFF — create the Ariadne tickets for REQ-0016 and REQ-0017 (TTC), REQ-0017 blocked by REQ-0016, and write delivery/tickets.md"
 blocked_by: []
 converged: true
 readiness_verdict: READY   # none | READY | READY-with-known-issues | NOT READY | void
@@ -29,7 +29,7 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-ENGINEERING_READY. Readiness round 1 `READY`, no conditions, no findings (Readiness log). Handoff packet and delivery manifest pending.
+HANDOFF. Handoff packet assembled; `delivery/manifest.md` issued at `band_owner: product` against `READY@2026-10-31`; INIT-0007 `active`; both stories `engineering-ready`. Tickets pending.
 
 ## Problem statement
 
@@ -49,7 +49,7 @@ this gap as an accepted cost ("No way to change a due date").
 
 ## Next action
 
-ROLE-product-manager: ENGINEERING_READY — handoff packet and delivery manifest (product band).
+ROLE-product-manager: HANDOFF — create the Ariadne tickets for REQ-0016 and REQ-0017 (TTC), REQ-0017 blocked by REQ-0016, and write delivery/tickets.md.
 
 ## Blocked by
 
@@ -250,7 +250,37 @@ with no findings rows is invalid output.
 
 ## Handoff packet
 
-_Assembled at ENGINEERING_READY._
+Assembled 2026-10-31 at ENGINEERING_READY by `ROLE-product-manager` against the `READY` verdict of 2026-10-31 (Readiness log, round 1; digest `(REQ-0016, 4, 2026-10-31), (REQ-0017, 3, 2026-10-31)`, INIT-0007 rev 3, unchanged on disk). Drafted inline under the size rule (§9d.2): a transcription of existing records.
+
+- **Repository:** `rortegalizardo/task-tracker-cli` (`~/Desktop/Projects/task-tracker-cli`), default branch `main` (`project/constraints.md` row 9).
+- **Outcome:** A person using `ttc` can give an existing task, open or done, with or without a due date, a due date they choose, with one short command; remove an existing task's due date with one short command; and keep everything else as it is today: only that task's due date changes, every command typed as it can be typed today gives the same output apart from the new usage that `ttc help` prints, and data files written by older ttc still work (`initiative.md` `## Outcome`, O1–O3).
+- **Stories, in suggested sequence:**
+  1. `REQ-0016` — set a due date (`ttc due <id> YYYY-MM-DD`); `depends_on: [none]`, on the frontier.
+  2. `REQ-0017` — remove a due date (`ttc due <id> --clear`); `depends_on: [REQ-0016]`: it adds the removing form to the command `REQ-0016` introduces.
+- **Design references and export paths:** none — no user-facing visual surface (`PD-0016` item 14; `project/constraints.md` row 8).
+- **Decisions in force:** `PD-0003`, `PD-0004`, `PD-0008`, `PD-0010`, `PD-0011`, `PD-0013`, `PD-0014`, `PD-0016` (chosen option A: `ttc due <id> YYYY-MM-DD` sets the due date, `ttc due <id> --clear` removes it; fixed success, no-op and refusal texts, check order, usage line and README section).
+- **Binding technical constraints** (all from `technical/assessment.md`, round 1; carried in each story's `## Technical constraints`; C8 does not apply, option B only; C2 binds `REQ-0016`):
+  - C1 — every changing-command rule applies unchanged: checks before the lock, read and find under it, one atomic write, a refusal writes nothing and creates no folder, the busy failure, a failure after the save keeps the change; open and done tasks.
+  - C2 — the typed date follows the one existing `ttc add --due` rule; no second date rule; no clock read.
+  - C3 — only that task's `due` changes; a removed due date is stored as `null`; no stored-format change, version stays 4; an older file is rewritten as version 4 only by a change.
+  - C4 — one usage line, after `ttc postpone <id>`, asserted verbatim by the whole-usage tests and the oracle; not between the `tag` and `note` lines.
+  - C5 — the test oracle (`test/support/ttc-model.js`) and the argument fuzzing (`fuzz-gen.js`, `fuzz-harness.js`) gain `due`, written from `PD-0016`, not from the new code; for `REQ-0016` no `--clear` is drawn.
+  - C6 — the check order of `PD-0016` item 6 is test-asserted wherever a message is fixed.
+  - C7 — the perf guard (10,000 tasks, median < 500 ms) must still pass.
+  - C9 — `ttc due <id>` alone is an argument error, checked after the id, before the lock; its wording is engineering's.
+  - C10 — the `due:` and `!overdue` tokens, the due filters, the `ttc stats` overdue count and the export due value follow the new stored value.
+- **Explicitly out of scope** (copied from `initiative.md` `## Scope`, Out of scope):
+  - Relative dates ("tomorrow", "+3d") or any date form other than `YYYY-MM-DD`.
+  - Changing the due date of several tasks in one command.
+  - Any change to `ttc add`, `ttc postpone` or `ttc copy`.
+  - Due times; reminders or notifications.
+  - Sorting tasks by due date.
+  - Any change to the output of a command typed as it can be typed today, other than the new usage in `ttc help`.
+  - Also excluded by `PD-0016` item 13: a form that shows a task's due date (option B).
+- **Open questions (non-blocking):** none. The verdict carries no conditions or known issues.
+- **Note for delivery:** `REQ-0017` changes the `ttc due` usage line that `REQ-0016` AC-9 asserts; "the `REQ-0016` tests still pass" in `REQ-0017` AC-10 means with the whole-usage assertions carrying the new line (`REQ-0017` AC-8, `PD-0016` items 10, 12).
+- **Delivery manifest:** `product/initiatives/INIT-0007-change-or-clear-due-date/delivery/manifest.md`
+- **Tickets** (Ariadne project TTC, `PD-0015`; mapping authority `delivery/tickets.md`): written at HANDOFF.
 
 ## Handoff log
 
@@ -272,6 +302,7 @@ Dates are UTC timestamps.
 | 2026-11-01T04:05:00Z | SOLUTION_CONVERGENCE | DECOMPOSITION | ROLE-product-manager | SOLUTION_CONVERGENCE exit criteria met: one accepted `PD-0016` naming option A, B and five other shapes rejected with reasons, consequences accepted; indexed in the same commit; draft `REQ-0016`/`REQ-0017` rev 2 consistent with it; no option left under consideration; Solution Contract cites `PD-0016` and records no design concept (no visual surface, `PD-0016` item 14) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DECOMPOSITION) holds: exactly one `status: accepted` chosen-option `PD-` citing a non-`infeasible` verdict (`feasible-with-constraints`, `technical/assessment.md` round 1). HOOK-decision-capture R1 (index row, same commit), R3 (rejected options non-empty), D11 (decision counter 16 matches the highest id; `origin/main` at 15, no `PD-0016` there) pass. No escalation-class question: the option choice is settled by the request (escalation-policy §3 route 2, §4.1). Hooks: HOOK-phase-entry pass | `fb6dac4630751802`, head `c7e34b5` |
 | 2026-11-01T04:30:00Z | DECOMPOSITION | READINESS | ROLE-product-manager | DECOMPOSITION exit criteria met: O1 -> accepted `REQ-0016` rev 4, O2 -> accepted `REQ-0017` rev 3, O3 -> both; each meets the nine points of §10.3 (accepted, one testable outcome, 11 and 10 pass/fail ACs, `CAP-0001`, no visual surface so no `DES-`, independently verifiable with `REQ-0017` `depends_on: [REQ-0016]` stated, no `blocker` `Q-`, no contradiction, indexed in the same commit); coherence round 1 (terminal) left no open blocking defect; convergence declared (`converged: true`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 READINESS) holds: `converged: true`; `HOOK-traceability` zero defects (Coverage validation, iteration 1); `technical/coherence.md` verdict `coherent`, round 1 terminal under §9d.3, D1 non-blocking and `fixed`; no user-facing story, so no `DES-` needed. AC texts for today's behaviour checked by the PM and by the architect on `node bin/ttc.js` at head `9d12abe`. Review budget this session: 1 of 6. Hooks: HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `3e90bc7` |
 | 2026-11-01T04:40:00Z | READINESS | ENGINEERING_READY | ROLE-product-manager | READINESS exit criteria met: `READY` recorded by ROLE-product-readiness-reviewer, round 1 of 2 declared terminal unless blocking; no conditions or known issues to record as `Q-`/`PD-` | Coverage validation zero defects ran before the dispatch (not a review dispatch; set unchanged since). Review budget used this session: 2 of 6 (coherence 1, readiness 1). `readiness_verdict: READY` set by the PM from the reviewer's Readiness log row (the dispatch limited its writes to the log row). Entry precondition (`lifecycle-hooks.md` §3.4.1 ENGINEERING_READY) holds: verdict `READY`, not `void`, digest `(REQ-0016, 4, 2026-10-31), (REQ-0017, 3, 2026-10-31)`; INIT-0007 rev 3 matches disk. Reviewer's non-finding note (`REQ-0017` AC-10 "the `REQ-0016` tests still pass" beside the usage line `REQ-0017` changes) is covered by `PD-0016` item 12 and `REQ-0017` AC-8/AC-10; carried as a handoff note, no story edit. Hooks: HOOK-readiness pass, HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `6c76dbc` |
+| 2026-11-01T04:50:00Z | ENGINEERING_READY | HANDOFF | ROLE-product-manager | ENGINEERING_READY exit criteria met: handoff packet self-contained (outcome, stories in sequence, no `DES-`, decisions, C1–C7, C9, C10, out of scope, no open questions, manifest path); `delivery/manifest.md` at `band_owner: product`, `issued_from_verdict: READY@2026-10-31`, digest `REQ-0016@4/2026-10-31; REQ-0017@3/2026-10-31; INIT-0007@3`, M1–M8 hold (graph `REQ-0016 -> REQ-0017` acyclic, waves 0 and 1, every identifier resolves, no plan or estimate); INIT-0007 `status: active` (index too); `REQ-0016`, `REQ-0017` `readiness: engineering-ready` | Entry precondition (`lifecycle-hooks.md` §3.4.1 HANDOFF) holds: H7 every packet bullet populated or explicit empty form; H12 manifest issued against the same verdict and digest. No story changed since the verdict (readiness field only, no revision change). Hooks: HOOK-phase-entry pass | `fb6dac4630751802` (carried), head `02ef7d2` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
