@@ -167,7 +167,7 @@ test('AC-10: help lists clean right after delete', () => {
         '  ttc important <id>',
         '  ttc unimportant <id>',
         '  ttc postpone <id>',
-        '  ttc due <id> YYYY-MM-DD',
+        '  ttc due <id> YYYY-MM-DD | --clear',
         '  ttc rename <id> "<title>"',
         '  ttc delete <id>',
         '  ttc clean',
