@@ -2,11 +2,11 @@
 id: REQ-0015
 type: requirement
 title: Tasks with no due date are listed on their own in one short command
-status: accepted
+status: superseded
 revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-29
-updated: 2026-10-29
+updated: 2026-11-01
 initiative: INIT-0006
 outcome_element: "O1, O2 and O3 (initiative.md): one short command lists only the open tasks with no due date, shown as ttc list shows tasks today, writing nothing; nothing else changes"
 acceptance:
@@ -29,10 +29,11 @@ depends_on: [none]
 constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)", "C10 (technical/assessment.md, round 1)"]
 observability: []
 rollout: none
-readiness: engineering-ready
+readiness: void
 tickets: []
 supersedes:
-superseded_by:
+superseded_by: REQ-0022
+archived_on: 2026-11-01
 ---
 
 # REQ-0015 — Tasks with no due date are listed on their own in one short command

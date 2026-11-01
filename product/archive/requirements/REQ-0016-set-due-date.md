@@ -2,11 +2,11 @@
 id: REQ-0016
 type: requirement
 title: A task's due date is set to a chosen date in one short command
-status: accepted
+status: superseded
 revision: 4
 owner_role: ROLE-product-manager
 created: 2026-10-31
-updated: 2026-10-31
+updated: 2026-11-01
 initiative: INIT-0007
 outcome_element: "O1 and O3 (initiative.md): one short command gives an existing task, open or done, with or without a due date, the date the user types; only that task's due date changes and nothing else does"
 acceptance:
@@ -28,10 +28,11 @@ depends_on: [none]
 constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)", "C10 (technical/assessment.md, round 1)"]
 observability: []
 rollout: none
-readiness: engineering-ready
+readiness: void
 tickets: []
 supersedes:
-superseded_by:
+superseded_by: REQ-0023
+archived_on: 2026-11-01
 ---
 
 # REQ-0016 — A task's due date is set to a chosen date in one short command

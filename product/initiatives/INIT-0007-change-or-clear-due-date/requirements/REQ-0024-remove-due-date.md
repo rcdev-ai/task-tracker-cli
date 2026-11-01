@@ -1,12 +1,12 @@
 ---
-id: REQ-0017
+id: REQ-0024
 type: requirement
 title: A task's due date is removed in one short command
 status: accepted
-revision: 3
+revision: 1
 owner_role: ROLE-product-manager
-created: 2026-10-31
-updated: 2026-10-31
+created: 2026-11-01
+updated: 2026-11-01
 initiative: INIT-0007
 outcome_element: "O2 and O3 (initiative.md): one short command removes an existing task's due date; only that task's due date changes and nothing else does"
 acceptance:
@@ -19,21 +19,21 @@ acceptance:
   - "AC-7. `tasks.json` holding the text `not json`: `ttc due 1 2099-11-10 --clear` → stderr is exactly `ttc: due date and --clear cannot be combined`; `ttc due 1 --clear` → stderr is one line starting `ttc: cannot read `; each with stdout empty, exit code 1, and `tasks.json` byte-for-byte unchanged. `$TTC_HOME` names a folder that does not exist, then `ttc due 1 --clear` → stderr is exactly `ttc: no task with id 1`, stdout is empty, exit code 1, and afterwards neither `tasks.json` nor the `$TTC_HOME` folder exists"
   - "AC-8. `ttc help` → stdout is exactly `Usage:` followed by these lines, each indented two spaces, in this order: `ttc help`; `ttc add \"<title>\" [--due YYYY-MM-DD] [--tag <t>]... [--note \"<text>\"] [--important]`; `ttc copy <id> [--due YYYY-MM-DD]`; `ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc done <id>`; `ttc reopen <id>`; `ttc important <id>`; `ttc unimportant <id>`; `ttc postpone <id>`; `ttc due <id> YYYY-MM-DD | --clear`; `ttc rename <id> \"<title>\"`; `ttc delete <id>`; `ttc clean`; `ttc tag <id> +<t> | -<t>`; `ttc note <id> [\"<text>\" | --clear]`; `ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc import <file>`; `ttc stats`; exit code 0"
   - "AC-9. README.md → the \"Changing a due date\" section shows `ttc due <id> YYYY-MM-DD | --clear` and, on top of what `REQ-0016` documents, states: that `--clear` removes the task's due date, on open and done tasks; the success line `Cleared due date of task <id>`; that on a task with no due date it prints `Task <id> has no due date`, changes nothing and exits 0; that a date and `--clear` together are refused with `ttc: due date and --clear cannot be combined`; and that a task without a due date shows in `ttc list --no-due`"
-  - "AC-10. `npm test` runs `node:test` tests covering AC-1 to AC-8; the `REQ-0016` tests still pass; the test oracle (`test/support/ttc-model.js`) and the argument fuzzing (`fuzz-gen.js`, `fuzz-harness.js`) cover `ttc due` with a valid date, an invalid date, `--clear`, a date and `--clear` together, neither, and an extra argument, and the place of each check in the order, written from `PD-0016`, not from the new code (C5); the tests that assert the whole usage carry the new line; and the perf guard (10,000 tasks, median under 500 ms) runs → all pass; the pull request delivering this story → the CI `test` check passes"
+  - "AC-10. `npm test` runs `node:test` tests covering AC-1 to AC-8; the `REQ-0023` tests still pass → all pass; the pull request delivering this story → the CI `test` check passes"
 capabilities: [CAP-0001]
 design_refs: []
-decisions: [PD-0003, PD-0004, PD-0008, PD-0010, PD-0011, PD-0014, PD-0016]
-depends_on: [REQ-0016]
-constraints: ["C1 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)", "C10 (technical/assessment.md, round 1)"]
+decisions: [PD-0003, PD-0004, PD-0008, PD-0010, PD-0011, PD-0014, PD-0016, PD-0017]
+depends_on: [REQ-0023]
+constraints: ["C1 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)", "C10 (technical/assessment.md, round 1)"]
 observability: []
 rollout: none
-readiness: engineering-ready
+readiness: not-assessed
 tickets: []
-supersedes:
+supersedes: REQ-0017
 superseded_by:
 ---
 
-# REQ-0017 — A task's due date is removed in one short command
+# REQ-0024 — A task's due date is removed in one short command
 
 ## Requirement
 
@@ -117,13 +117,13 @@ The rules are `PD-0016`; this section states what the user sees.
 - [ ] AC-7. `tasks.json` holding the text `not json`: `ttc due 1 2099-11-10 --clear` → stderr is exactly `ttc: due date and --clear cannot be combined`; `ttc due 1 --clear` → stderr is one line starting `ttc: cannot read `; each with stdout empty, exit code 1, and `tasks.json` byte-for-byte unchanged. `$TTC_HOME` names a folder that does not exist, then `ttc due 1 --clear` → stderr is exactly `ttc: no task with id 1`, stdout is empty, exit code 1, and afterwards neither `tasks.json` nor the `$TTC_HOME` folder exists
 - [ ] AC-8. `ttc help` → stdout is exactly `Usage:` followed by these lines, each indented two spaces, in this order: `ttc help`; `ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]`; `ttc copy <id> [--due YYYY-MM-DD]`; `ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc done <id>`; `ttc reopen <id>`; `ttc important <id>`; `ttc unimportant <id>`; `ttc postpone <id>`; `ttc due <id> YYYY-MM-DD | --clear`; `ttc rename <id> "<title>"`; `ttc delete <id>`; `ttc clean`; `ttc tag <id> +<t> | -<t>`; `ttc note <id> ["<text>" | --clear]`; `ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc import <file>`; `ttc stats`; exit code 0
 - [ ] AC-9. README.md → the "Changing a due date" section shows `ttc due <id> YYYY-MM-DD | --clear` and, on top of what `REQ-0016` documents, states: that `--clear` removes the task's due date, on open and done tasks; the success line `Cleared due date of task <id>`; that on a task with no due date it prints `Task <id> has no due date`, changes nothing and exits 0; that a date and `--clear` together are refused with `ttc: due date and --clear cannot be combined`; and that a task without a due date shows in `ttc list --no-due`
-- [ ] AC-10. `npm test` runs `node:test` tests covering AC-1 to AC-8; the `REQ-0016` tests still pass; the test oracle (`test/support/ttc-model.js`) and the argument fuzzing (`fuzz-gen.js`, `fuzz-harness.js`) cover `ttc due` with a valid date, an invalid date, `--clear`, a date and `--clear` together, neither, and an extra argument, and the place of each check in the order, written from `PD-0016`, not from the new code (C5); the tests that assert the whole usage carry the new line; and the perf guard (10,000 tasks, median under 500 ms) runs → all pass; the pull request delivering this story → the CI `test` check passes
+- [ ] AC-10. `npm test` runs `node:test` tests covering AC-1 to AC-8; the `REQ-0023` tests still pass → all pass; the pull request delivering this story → the CI `test` check passes
 
 ## Sequencing
 
 After `REQ-0016`: it adds the removing form to the command `REQ-0016`
-introduces, and extends its usage line, tests, oracle, fuzz cases and README
-section. `depends_on: [REQ-0016]`.
+introduces, and extends its usage line, tests and README
+section. `depends_on: [REQ-0023]`.
 
 ## Technical constraints
 
@@ -132,10 +132,10 @@ unchanged here; C8 does not apply: it is option B only, `PD-0016` item 15):
 
 - **C1**: every changing-command rule applies unchanged: arguments and id checked before the lock; under the lock read the list, find the task (`ttc: no task with id <id>`), change, write atomically, print one line, exit 0. A refusal leaves `tasks.json` byte-identical and creates no folder when none exists. The lock's busy failure applies. A failure after the save exits 1 and keeps the change (`PD-0008`). Works on open and done tasks.
 - **C3**: only that task's `due` changes; title, status, tags, note, mark, id, other tasks and list order stay. The clear form stores the empty value every reader accepts (`null`); any other "empty" (for example `""`) makes the whole file unreadable for every command (`PD-0004` item 8). No stored-format change: version stays 4. A file of versions 1–3 is rewritten as version 4 by a change and left as it is by a no-op or a refusal (`PD-0010` items 1, 4).
-- **C4**: help prints exactly one usage line per command. The changed line is asserted verbatim, in order, by 4 whole-usage unit files and the oracle, and shown in the README; this story re-touches all of them. `test/cli.test.js` asserts the `note` line directly follows the `tag` line.
-- **C5**: the CI `test` check gates on the test-owned oracle and fuzz generators. Both gain the clear form (argv generator covering a date, a bad date, `--clear`, both, neither, an extra argument), written from `PD-0016`, not from the new code. Listing `due` there also covers it in the damaged-file fuzz cases.
-- **C6**: the check order is stated (`PD-0016` item 6) and test-asserted wherever a message is fixed. Wording of argument errors is engineering's unless the PD fixes it (`PD-0003` item 2); the fuzz harness checks only the `ttc: ` form.
-- **C7**: the perf guard (10,000 tasks, median < 500 ms) is not threatened: one task changed per run. No new case.
+- **C4**: help prints exactly one usage line per command. The whole usage is asserted verbatim, in order, by one test (AC-8) and shown in the README. `test/cli.test.js` asserts the `note` line directly follows the `tag` line.
+- **C5**: withdrawn by `PD-0017`: no test-owned oracle or fuzz generators.
+- **C6**: the check order is stated (`PD-0016` item 6) and test-asserted wherever a message is fixed. Wording of argument errors is engineering's unless the PD fixes it (`PD-0003` item 2).
+- **C7**: withdrawn by `PD-0017`: no perf guard.
 - **C9**: `ttc due <id>` alone stays an argument error, a command-level check placed with the other argument checks, before the lock, after the combination check (`PD-0016` items 1, 6).
 - **C10**: everything that follows from the due date follows the new stored value with no change to those parts: `due:` and `!overdue` tokens, `--overdue`, `--due-from`, `--due-to`, `--no-due`, the `ttc stats` overdue count, the export `due` value.
 
