@@ -254,9 +254,14 @@ function buildUnits(r, cmd, list, junkP, importTarget) {
       positionals.push(pos(id()));
       if (r.chance(0.5)) options.push(opt('--due', date()));
       break;
-    case 'due':
-      positionals.push(pos(id()), pos(date()));
+    case 'due': {
+      positionals.push(pos(id()));
+      // Damaged-data cases (junkP === 0) use valid forms so storage is read.
+      const form = r.pick(junkP === 0 ? ['set', 'clear'] : ['set', 'set', 'clear', 'clear', 'both', 'neither']);
+      if (form === 'set' || form === 'both') positionals.push(pos(date()));
+      if (form === 'clear' || form === 'both') options.push(opt('--clear'));
       break;
+    }
     case 'list':
       filterOptions();
       break;
@@ -349,7 +354,7 @@ const ARGS_LABELS = [...COMMANDS, 'unknown', 'empty', 'dash-help'];
 
 // Keep the 10,000-case budget. Required cases occupy the subprocess sampling
 // slots first, so every seed exercises them in both execution modes.
-const ARGS_SAMPLE_EVERY = 100;
+const ARGS_SAMPLE_EVERY = 75;
 
 // Fixed from AC-1's resulting state, not from production code. The important
 // open task, done task, dates and tags distinguish the default views and ANDs.
@@ -419,8 +424,8 @@ function noDueCases() {
 
 const NO_DUE_CASES = noDueCases();
 
-// PD-0016 set-form only: fixed errors establish precedence independently of
-// the generic oracle. Reuse the mixed dated/undated, open/done fixture above.
+// PD-0016 §1–9 and TTC-2 AC-6/AC-7: fixed errors establish precedence
+// independently of the generic oracle. Preserve the original set-form cases.
 function dueCases() {
   const cases = [];
   const add = (args, message, files = { [STORED]: file(canonicalText(NO_DUE_LIST)) }) => {
@@ -452,6 +457,48 @@ function dueCases() {
   add(['1', '2026-02-30'], 'invalid date: 2026-02-30', corrupt);
   add(['1', '2099-11-10'], undefined, corrupt).expectedStderrPrefix = 'ttc: cannot read ';
   add(['1', '2099-11-10'], 'no task with id 1', {});
+
+  // AC-1/AC-2 tasks before clearing: dated open, undated open, dated done.
+  const clearList = {
+    nextId: 4,
+    tasks: [
+      { id: 1, title: 'Pay rent', status: 'open', due: '2000-01-02', tags: ['bills'], note: null, important: false },
+      { id: 2, title: 'Call mom', status: 'open', due: null, tags: ['home'], note: null, important: false },
+      { id: 3, title: 'Fix bike', status: 'done', due: '2099-06-01', tags: [], note: null, important: false },
+    ],
+  };
+  const clearFiles = { [STORED]: file(canonicalText(clearList)) };
+  add(['1', '--clear'], undefined, clearFiles);
+  add(['--clear', '003'], undefined, clearFiles);
+  add(['2', '--clear'], undefined, clearFiles);
+  add(['--clear', '4']); // Undated done task in the original mixed fixture.
+  // AC-3/AC-4: an older file is preserved on no-op and written as v4 on change.
+  const older = { [STORED]: file(versionedText(clearList, 3)) };
+  add(['2', '--clear'], undefined, older);
+  add(['1', '--clear'], undefined, older);
+  add(['--clear', '003'], undefined, older);
+
+  // AC-6 starts after clearing task 1, while task 3 still has its date.
+  const afterClear = { ...clearList, tasks: clearList.tasks.map((t) => t.id === 1 ? { ...t, due: null } : t) };
+  const afterFiles = { [STORED]: file(canonicalText(afterClear)) };
+  const errors = [
+    [['3', '2099-11-10', '--clear'], 'due date and --clear cannot be combined'],
+    [['--clear', '3', '2099-11-10'], 'due date and --clear cannot be combined'],
+    [['3', '2026-02-30', '--clear'], 'due date and --clear cannot be combined'],
+    [['99', '2099-11-10', '--clear'], 'due date and --clear cannot be combined'],
+    [['abc', '2099-11-10', '--clear'], 'invalid task id: abc'],
+    [['abc', '--clear'], 'invalid task id: abc'],
+    [['99', '--clear'], 'no task with id 99'],
+    [['1', '--clear', '--clear'], 'option given twice: --clear'],
+    [['--clear'], 'missing argument: <id>'],
+    [['1', '2099-11-10', 'x', '--clear'], 'unexpected argument: x'],
+    [['1', '--clear', '--bogus'], 'unknown option: --bogus'],
+  ];
+  for (const [args, message] of errors) add(args, message, afterFiles);
+  add(['1'], undefined, afterFiles).expectedStderrPrefix = 'ttc: ';
+  add(['1', '2099-11-10', '--clear'], 'due date and --clear cannot be combined', corrupt);
+  add(['1', '--clear'], undefined, corrupt).expectedStderrPrefix = 'ttc: cannot read ';
+  add(['1', '--clear'], 'no task with id 1', {});
   return cases;
 }
 
