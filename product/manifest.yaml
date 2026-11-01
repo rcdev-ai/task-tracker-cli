@@ -179,9 +179,9 @@ id_counters:
   # counter, exactly like ROLE- and SKILL-. This key stays at 0 permanently.
   area: 0
   capability: 1
-  decision: 16
+  decision: 17
   initiative: 7
-  requirement: 17
+  requirement: 24
   design: 0
   question: 1
 

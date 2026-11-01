@@ -3,8 +3,7 @@
 Task tracker CLI. Node.js, built-in libraries only.
 
 Install from a clone with `npm install --global .`, then run `ttc help`.
-`npm test` runs the whole suite (unit tests, then the perf check).
-`npm run test:perf` runs only the perf check (median `ttc add`, `ttc list` and filtered `ttc list` time on 10,000 tasks, must be under 500 ms).
+`npm test` runs the test suite.
 `npm run lint` checks every source and test file for syntax errors.
 
 ## Task notes

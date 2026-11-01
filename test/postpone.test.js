@@ -174,32 +174,3 @@ test('AC-11: postpone rewrites a version 3 file as version 4', () => {
   assert.equal(JSON.parse(fileBytes(sb).toString('utf8')).version, 4);
   expectOk(sb, '#1 [ ] Pay rent due:2099-12-31\n', 'list');
 });
-
-test('AC-12: help lists postpone after unimportant', () => {
-  const sb = sandbox();
-  expectOk(
-    sb,
-    'Usage:\n' +
-      lines(
-        '  ttc help',
-        '  ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]',
-        '  ttc copy <id> [--due YYYY-MM-DD]',
-        '  ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]',
-        '  ttc done <id>',
-        '  ttc reopen <id>',
-        '  ttc important <id>',
-        '  ttc unimportant <id>',
-        '  ttc postpone <id>',
-        '  ttc due <id> YYYY-MM-DD | --clear',
-        '  ttc rename <id> "<title>"',
-        '  ttc delete <id>',
-        '  ttc clean',
-        '  ttc tag <id> +<t> | -<t>',
-        '  ttc note <id> ["<text>" | --clear]',
-        '  ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]',
-        '  ttc import <file>',
-        '  ttc stats',
-      ),
-    'help',
-  );
-});

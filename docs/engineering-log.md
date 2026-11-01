@@ -11,15 +11,15 @@ only.
 
 | Target | Bar | Baseline | Status | Ticket |
 | --- | --- | --- | --- | --- |
-| `ttc add` whole-process time, 10,000 stored tasks | median of 5 runs (after 1 warm-up) under 500 ms in CI, Node 24, ubuntu-latest, stdout to /dev/null | about 75-79 ms locally (macOS arm64, Node 26.11.1, 2026-10-21); CI unknown | guard in place (RCDEV-834 Done, 2026-10-22) | RCDEV-834 |
-| `ttc list` whole-process time, 10,000 stored tasks | same as above | about 60 ms locally (same setup); CI unknown | guard in place (RCDEV-834 Done, 2026-10-22) | RCDEV-834 |
-| Robustness under random arguments and corrupted data | at least 10,000 generated cases per kind per run, seeded, seed printed on failure; invalid input gives a non-zero exit and one `ttc:` line, never a stack trace; a failed operation leaves `tasks.json` bytes unchanged; valid input behaves as today | 10,000 argument-list cases and 10,000 corrupted-data cases per run (`test/fuzz-args.test.js`, `test/fuzz-data.test.js`, in-process, plus 50 per file through a real process), seeded by `TTC_FUZZ_SEED`; about 45 s for the args file and 12-36 s for the data file locally (macOS arm64, Node 26.11.1, 2026-10-21, 6 green full runs) | met | RCDEV-833 |
+| `ttc add` whole-process time, 10,000 stored tasks | median of 5 runs (after 1 warm-up) under 500 ms in CI, Node 24, ubuntu-latest, stdout to /dev/null | about 75-79 ms locally (macOS arm64, Node 26.11.1, 2026-10-21); CI unknown | withdrawn 2026-11-01 (`PD-0017`): no test checks it any more | RCDEV-834 |
+| `ttc list` whole-process time, 10,000 stored tasks | same as above | about 60 ms locally (same setup); CI unknown | withdrawn 2026-11-01 (`PD-0017`): no test checks it any more | RCDEV-834 |
+| Robustness under random arguments and corrupted data | at least 10,000 generated cases per kind per run, seeded, seed printed on failure; invalid input gives a non-zero exit and one `ttc:` line, never a stack trace; a failed operation leaves `tasks.json` bytes unchanged; valid input behaves as today | 10,000 argument-list cases and 10,000 corrupted-data cases per run (`test/fuzz-args.test.js`, `test/fuzz-data.test.js`, in-process, plus 50 per file through a real process), seeded by `TTC_FUZZ_SEED`; about 45 s for the args file and 12-36 s for the data file locally (macOS arm64, Node 26.11.1, 2026-10-21, 6 green full runs) | withdrawn 2026-11-01 (`PD-0017`): no test checks it any more | RCDEV-833 |
 | CI syntax check | CI fails on a syntax error in any source or test file, Node built-ins only | only files some test loads are parsed in CI | met (RCDEV-832 Done, 2026-10-22) | RCDEV-832 |
 | Concurrent changing commands lose no change | 20 `ttc add` started at once on one `TTC_HOME` keep 20 of 20 tasks, ids 1-20, repeated 5 times per CI run; a lock held by a live process past 10 s gives one `ttc:` line and exit 1 with the file unchanged; a lock left by a killed process blocks nothing | 1, 2 and 2 of 20 tasks kept in 3 runs, every process exit 0 (macOS arm64, Node 26.11.1, `main` cc20f93, 2026-10-22); no lock exists | met (RCDEV-835 Done, 2026-10-22) | RCDEV-835 |
 | Killed writes leave no leftovers; first write durable | after a killed write, the next changing command leaves no ttc temp file in `TTC_HOME`; creating `TTC_HOME` fsyncs the parent of each folder created | 4 killed writes left 4 `.tasks.json.<pid>.<hex>.tmp` files, still there after the next `ttc add` (2026-10-22); parent of a new data folder never fsynced | met (RCDEV-836 Done, 2026-10-22) | RCDEV-836 |
 | Versioned data file with automatic migration | every write and export is version 2 (`"version": 2` first key); version 1 (no key) works as today and is rewritten as version 2 by the next changing command; a newer version gives one `ttc: cannot read` line, exit 1, bytes unchanged | no version marker; unknown keys rejected (`validateList`), so a future layout change would make every existing file unreadable | met (RCDEV-837 Done, 2026-10-22); RCDEV-841 adds version 3 | RCDEV-837 |
 | Exit codes consistent and documented | 0 on success, 1 on every failure on every path (output-stream errors and exceptions outside `run()` included), never a stack trace; README "Exit codes" section; `ttc help` unchanged | handled failures exit 1 with one line; EPIPE prints a stack trace; nothing documented (2026-10-22) | met (RCDEV-838 Done, 2026-10-22); RCDEV-839, RCDEV-840 and RCDEV-841 keep it for their new failures | RCDEV-838 |
-| Filtered `ttc list` whole-process time, 10,000 stored tasks | `ttc list --all --search <word> --due-from <d> --due-to <d>`: same bar as plain `list` (median of 5 under 500 ms in CI) | unknown, the filters do not exist yet; plain `list` about 60 ms locally (2026-10-21) | in flight | RCDEV-839 |
+| Filtered `ttc list` whole-process time, 10,000 stored tasks | `ttc list --all --search <word> --due-from <d> --due-to <d>`: same bar as plain `list` (median of 5 under 500 ms in CI) | unknown, the filters do not exist yet; plain `list` about 60 ms locally (2026-10-21) | withdrawn 2026-11-01 (`PD-0017`): no test checks it any more | RCDEV-839 |
 
 ## Tech-debt register
 
@@ -265,3 +265,31 @@ amendment through the engineering -> product channel, and none waits on it.
 - RCDEV-839: none
 - RCDEV-840: blocked by RCDEV-839
 - RCDEV-841: blocked by RCDEV-839, RCDEV-840
+
+## 2026-11-01 — trim the harden-ttc suites and repeated test copies (PD-0017)
+
+**Prompt:** Owner-approved cleanup from Parley room Factory M3 #64. Remove the
+"harden ttc" generated tests and perf gate (RCDEV-833, RCDEV-834), the
+repeated whole-help checks and the 4 storage-format unit tests, together
+with the requirements that demanded them.
+
+**Done:**
+- Removed `test/fuzz-args.test.js`, `test/fuzz-data.test.js`,
+  `test/support/` (reference model, generators, harness, seeded random) and
+  `test/perf/add-list.perf.js`, the `test:perf` script and its CI step.
+  `npm test` is now `npm run test:unit`.
+- Kept one whole-help check (`test/due-clear.test.js`, `REQ-0024` AC-8);
+  removed its 5 copies in `clean`, `copy`, `due`, `important` and `postpone`.
+- Removed the 4 storage-format unit tests RCDEV-856 rewrote; the CLI tests
+  cover the same format behaviour.
+- No source change: RCDEV-833's invalid-UTF-8 refusal in `src/` is product
+  behaviour, not suite support, and stays. The RCDEV-832 CI syntax check stays.
+
+**Effect:** 333 → 318 `it`/`test` calls and 7,352 → 5,233 lines in
+`test/**/*.js`. The NFR rows for the perf targets and generated robustness
+are marked withdrawn above; the bars are no longer checked by CI. The
+nightly bug finder (`factory bugfind`, `npm run test:unit`) now catches
+regressions in the fixed CLI tests only (owner's choice, `PD-0017` item 7).
+
+**Product record:** `PD-0017`; `REQ-0011`–`REQ-0017` superseded by
+`REQ-0018`–`REQ-0024`; `project/constraints.md` row 7 amended.

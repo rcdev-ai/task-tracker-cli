@@ -1,12 +1,12 @@
 ---
-id: REQ-0011
+id: REQ-0018
 type: requirement
 title: Important tasks are marked from the ttc command line and listed first
 status: accepted
-revision: 3
+revision: 1
 owner_role: ROLE-product-manager
-created: 2026-10-26
-updated: 2026-10-26
+created: 2026-11-01
+updated: 2026-11-01
 initiative: INIT-0002
 outcome_element: "O1, O2 and O3 (initiative.md): mark and unmark a task as important; ttc list shows important tasks first and shows the mark; nothing else changes"
 acceptance:
@@ -24,23 +24,23 @@ acceptance:
   - "AC-12. Three files made with `ttc export` and then edited: one with `\"version\"` set to 5, one where one task's important mark (the field README \"Data file format\" names) holds the string `\"yes\"`, and one with that field removed from one task. Each as `tasks.json`: `ttc list` → stderr is exactly one line starting `ttc: cannot read <path>: ` (`<path>` is the path of `tasks.json`), stdout is empty, exit code 1, and the file is unchanged. Each given to `ttc import`: stderr is exactly one line starting `ttc: invalid import file <file>: `, exit code 1, and the current `tasks.json` is unchanged"
   - "AC-13. `ttc important abc` and `ttc unimportant abc` → stderr is exactly the line `ttc: invalid task id: abc`, stdout is empty, exit code 1, `tasks.json` unchanged. With only task 1 stored, `ttc important 7` and `ttc unimportant 7` → stderr is exactly `ttc: no task with id 7`, stdout is empty, exit code 1, `tasks.json` unchanged"
   - "AC-14. Each of `ttc important`, `ttc important 1 2`, `ttc add \"Buy milk\" --important --important` and `ttc add \"Buy milk\" --important yes` → stderr is one line starting `ttc: `, stdout is empty, exit code 1, and `tasks.json` unchanged (not created when it did not exist)"
-  - "AC-15. `ttc help` → stdout is exactly `Usage:` followed by these lines, each indented two spaces, in this order: `ttc help`; `ttc add \"<title>\" [--due YYYY-MM-DD] [--tag <t>]... [--note \"<text>\"] [--important]`; `ttc list [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc done <id>`; `ttc reopen <id>`; `ttc important <id>`; `ttc unimportant <id>`; `ttc rename <id> \"<title>\"`; `ttc delete <id>`; `ttc tag <id> +<t> | -<t>`; `ttc note <id> [\"<text>\" | --clear]`; `ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc import <file>`; `ttc stats`; exit code 0"
+  - "AC-15. Withdrawn by `PD-0017`: the whole `ttc help` output is specified once, by `REQ-0024` AC-8"
   - "AC-16. README.md → documents `ttc add --important`, `ttc important <id>`, `ttc unimportant <id>`, the `ttc list` order and the `!important` token, and in \"Data file format\" format version 4 with the mark's field and values, that versions 1–3 are read with no task important, and that after the first change an older ttc can no longer read the file or new JSON exports"
-  - "AC-17. `npm test` runs `node:test` tests covering AC-1 to AC-15 → all pass; the pull request delivering this story → the CI `test` check passes"
+  - "AC-17. `npm test` runs `node:test` tests covering AC-1 to AC-14 → all pass; the pull request delivering this story → the CI `test` check passes"
 capabilities: [CAP-0001]
 design_refs: []
-decisions: [PD-0003, PD-0004, PD-0008, PD-0009, PD-0010]
+decisions: [PD-0003, PD-0004, PD-0008, PD-0009, PD-0010, PD-0017]
 depends_on: [none]
-constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)"]
+constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)"]
 observability: []
 rollout: migration
-readiness: engineering-ready
+readiness: not-assessed
 tickets: []
-supersedes:
+supersedes: REQ-0011
 superseded_by:
 ---
 
-# REQ-0011 — Important tasks are marked from the ttc command line and listed first
+# REQ-0018 — Important tasks are marked from the ttc command line and listed first
 
 ## Requirement
 
@@ -121,9 +121,9 @@ Rules are `PD-0009` and `PD-0010`; this section states what the user sees.
 - [ ] AC-12. Three files made with `ttc export` and then edited: one with `"version"` set to 5, one where one task's important mark (the field README "Data file format" names) holds the string `"yes"`, and one with that field removed from one task. Each as `tasks.json`: `ttc list` → stderr is exactly one line starting `ttc: cannot read <path>: ` (`<path>` is the path of `tasks.json`), stdout is empty, exit code 1, and the file is unchanged. Each given to `ttc import`: stderr is exactly one line starting `ttc: invalid import file <file>: `, exit code 1, and the current `tasks.json` is unchanged
 - [ ] AC-13. `ttc important abc` and `ttc unimportant abc` → stderr is exactly the line `ttc: invalid task id: abc`, stdout is empty, exit code 1, `tasks.json` unchanged. With only task 1 stored, `ttc important 7` and `ttc unimportant 7` → stderr is exactly `ttc: no task with id 7`, stdout is empty, exit code 1, `tasks.json` unchanged
 - [ ] AC-14. Each of `ttc important`, `ttc important 1 2`, `ttc add "Buy milk" --important --important` and `ttc add "Buy milk" --important yes` → stderr is one line starting `ttc: `, stdout is empty, exit code 1, and `tasks.json` unchanged (not created when it did not exist)
-- [ ] AC-15. `ttc help` → stdout is exactly `Usage:` followed by these lines, each indented two spaces, in this order: `ttc help`; `ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]`; `ttc list [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc done <id>`; `ttc reopen <id>`; `ttc important <id>`; `ttc unimportant <id>`; `ttc rename <id> "<title>"`; `ttc delete <id>`; `ttc tag <id> +<t> | -<t>`; `ttc note <id> ["<text>" | --clear]`; `ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc import <file>`; `ttc stats`; exit code 0
+- [ ] AC-15. Withdrawn by `PD-0017`: the whole `ttc help` output is specified once, by `REQ-0024` AC-8
 - [ ] AC-16. README.md → documents `ttc add --important`, `ttc important <id>`, `ttc unimportant <id>`, the `ttc list` order and the `!important` token, and in "Data file format" format version 4 with the mark's field and values, that versions 1–3 are read with no task important, and that after the first change an older ttc can no longer read the file or new JSON exports
-- [ ] AC-17. `npm test` runs `node:test` tests covering AC-1 to AC-15 → all pass; the pull request delivering this story → the CI `test` check passes
+- [ ] AC-17. `npm test` runs `node:test` tests covering AC-1 to AC-14 → all pass; the pull request delivering this story → the CI `test` check passes
 
 ## Sequencing
 
@@ -139,8 +139,8 @@ From `technical/assessment.md`, round 1:
 - **C3**: the new rules add to `PD-0003` items 7–10, 12 and 14; they are fixed in `PD-0009`, and tests assert the fixed text exactly.
 - **C4**: `ttc important`, `ttc unimportant` and `ttc add --important` inherit the id, option, lock, atomic-write, no-op and failure-after-save rules of the existing changing commands (`PD-0003` item 2, `PD-0004` items 2–4 and 7, `PD-0008`).
 - **C5**: `tasks.json` and import files share one parse path; the mark is checked strictly and the same way in both, never coerced, and "exported then imported is the same list" includes it, also for a filtered JSON export.
-- **C6**: the test oracle (`test/support/ttc-model.js`, `fuzz-gen.js`) and the unit tests that assert format 3 output move with the change; the oracle is changed from the text of `PD-0009` and `PD-0010`, not from the new code.
-- **C7**: the perf guard (10,000 tasks, median < 500 ms) must still pass; ordering by group then id is the same cost class as today's sort.
+- **C6**: withdrawn by `PD-0017`: no test oracle, fuzz generator or storage-format unit test moves with the change; the CLI tests cover the format 4 behaviour.
+- **C7**: withdrawn by `PD-0017`: no perf guard.
 
 ## Observability
 

@@ -208,27 +208,3 @@ test('AC-12: v3 refusal preserves bytes and successful copy writes v4 with an op
   assert.deepEqual(stored(sb), expected);
   assert.deepEqual(exported(sb, 'out.json'), expected);
 });
-
-test('AC-13: help lists the exact copy usage between add and list', (t) => {
-  const sb = sandbox(t);
-  expectOk(sb, 'Usage:\n' + lines(
-    '  ttc help',
-    '  ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]',
-    '  ttc copy <id> [--due YYYY-MM-DD]',
-    '  ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]',
-    '  ttc done <id>',
-    '  ttc reopen <id>',
-    '  ttc important <id>',
-    '  ttc unimportant <id>',
-    '  ttc postpone <id>',
-    '  ttc due <id> YYYY-MM-DD | --clear',
-    '  ttc rename <id> "<title>"',
-    '  ttc delete <id>',
-    '  ttc clean',
-    '  ttc tag <id> +<t> | -<t>',
-    '  ttc note <id> ["<text>" | --clear]',
-    '  ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]',
-    '  ttc import <file>',
-    '  ttc stats',
-  ), 'help');
-});

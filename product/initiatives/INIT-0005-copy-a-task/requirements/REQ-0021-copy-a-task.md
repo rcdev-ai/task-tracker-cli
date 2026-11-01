@@ -1,12 +1,12 @@
 ---
-id: REQ-0014
+id: REQ-0021
 type: requirement
 title: A new task is made from an existing one in one short command
 status: accepted
-revision: 3
+revision: 1
 owner_role: ROLE-product-manager
-created: 2026-10-29
-updated: 2026-10-29
+created: 2026-11-01
+updated: 2026-11-01
 initiative: INIT-0005
 outcome_element: "O1, O2 and O3 (initiative.md): make a new open task holding an existing task's title, due date, tags, note and important mark with one short command; the output gives the new id; nothing else changes"
 acceptance:
@@ -22,23 +22,23 @@ acceptance:
   - "AC-10. `$TTC_HOME` names a folder that does not exist, then `ttc copy 1` → stderr is exactly `ttc: no task with id 1`, stdout is empty, exit code 1, and afterwards neither `tasks.json` nor the `$TTC_HOME` folder exists"
   - "AC-11. `tasks.json` holding the text `not json`, then `ttc copy 1` → stderr is one line starting `ttc: cannot read `, stdout is empty, exit code 1, and `tasks.json` is byte-for-byte unchanged"
   - "AC-12. `tasks.json` in format version 3 holding exactly `{\"version\":3,\"nextId\":2,\"tasks\":[{\"id\":1,\"title\":\"Pay rent\",\"status\":\"done\",\"due\":\"2099-10-01\",\"tags\":[\"bills\"],\"note\":\"by card\"}]}`, then `ttc copy 5` → stderr is exactly `ttc: no task with id 5`, exit code 1, and `tasks.json` is byte-for-byte unchanged; then `ttc copy 1` → stdout is the single line `Copied task 1 as task 2`, exit code 0; `tasks.json` now holds `\"version\": 4`, and `ttc export out.json` parsed has `nextId` 3 and exactly the tasks `{\"id\":1,\"title\":\"Pay rent\",\"status\":\"done\",\"due\":\"2099-10-01\",\"tags\":[\"bills\"],\"note\":\"by card\",\"important\":false}` and `{\"id\":2,\"title\":\"Pay rent\",\"status\":\"open\",\"due\":\"2099-10-01\",\"tags\":[\"bills\"],\"note\":\"by card\",\"important\":false}`, in that order"
-  - "AC-13. `ttc help` → stdout is exactly `Usage:` followed by these lines, each indented two spaces, in this order: `ttc help`; `ttc add \"<title>\" [--due YYYY-MM-DD] [--tag <t>]... [--note \"<text>\"] [--important]`; `ttc copy <id> [--due YYYY-MM-DD]`; `ttc list [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc done <id>`; `ttc reopen <id>`; `ttc important <id>`; `ttc unimportant <id>`; `ttc postpone <id>`; `ttc rename <id> \"<title>\"`; `ttc delete <id>`; `ttc clean`; `ttc tag <id> +<t> | -<t>`; `ttc note <id> [\"<text>\" | --clear]`; `ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc import <file>`; `ttc stats`; exit code 0"
+  - "AC-13. Withdrawn by `PD-0017`: the whole `ttc help` output is specified once, by `REQ-0024` AC-8"
   - "AC-14. README.md → has a \"Copying a task\" section documenting `ttc copy <id> [--due YYYY-MM-DD]`: that the new task has the original's title, due date, tags, note and important mark, is open and gets a new id; that `--due` gives it a different due date under the same rule as `ttc add --due`; that it prints `Copied task <id> as task <new-id>`; its refusals (`ttc: no task with id <id>`, `ttc: invalid date: <d>`, `ttc: no task id is left`); and that only the new task is added. It does not present copying and then deleting as a way to change a due date"
-  - "AC-15. `npm test` runs `node:test` tests covering AC-1 to AC-13, and the test oracle and the argument fuzzing cover `ttc copy` and its `--due` cases (C6) → all pass; the pull request delivering this story → the CI `test` check passes"
+  - "AC-15. `npm test` runs `node:test` tests covering AC-1 to AC-12 → all pass; the pull request delivering this story → the CI `test` check passes"
 capabilities: [CAP-0001]
 design_refs: []
-decisions: [PD-0003, PD-0004, PD-0008, PD-0009, PD-0010, PD-0011, PD-0013]
+decisions: [PD-0003, PD-0004, PD-0008, PD-0009, PD-0010, PD-0011, PD-0013, PD-0017]
 depends_on: [none]
-constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C6 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)", "C8 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)"]
+constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C8 (technical/assessment.md, round 1)", "C9 (technical/assessment.md, round 1)"]
 observability: []
 rollout: none
-readiness: engineering-ready
+readiness: not-assessed
 tickets: []
-supersedes:
+supersedes: REQ-0014
 superseded_by:
 ---
 
-# REQ-0014 — A new task is made from an existing one in one short command
+# REQ-0021 — A new task is made from an existing one in one short command
 
 ## Requirement
 
@@ -129,9 +129,9 @@ The rules are `PD-0013`; this section states what the user sees.
 - [ ] AC-10. `$TTC_HOME` names a folder that does not exist, then `ttc copy 1` → stderr is exactly `ttc: no task with id 1`, stdout is empty, exit code 1, and afterwards neither `tasks.json` nor the `$TTC_HOME` folder exists
 - [ ] AC-11. `tasks.json` holding the text `not json`, then `ttc copy 1` → stderr is one line starting `ttc: cannot read `, stdout is empty, exit code 1, and `tasks.json` is byte-for-byte unchanged
 - [ ] AC-12. `tasks.json` in format version 3 holding exactly `{"version":3,"nextId":2,"tasks":[{"id":1,"title":"Pay rent","status":"done","due":"2099-10-01","tags":["bills"],"note":"by card"}]}`, then `ttc copy 5` → stderr is exactly `ttc: no task with id 5`, exit code 1, and `tasks.json` is byte-for-byte unchanged; then `ttc copy 1` → stdout is the single line `Copied task 1 as task 2`, exit code 0; `tasks.json` now holds `"version": 4`, and `ttc export out.json` parsed has `nextId` 3 and exactly the tasks `{"id":1,"title":"Pay rent","status":"done","due":"2099-10-01","tags":["bills"],"note":"by card","important":false}` and `{"id":2,"title":"Pay rent","status":"open","due":"2099-10-01","tags":["bills"],"note":"by card","important":false}`, in that order
-- [ ] AC-13. `ttc help` → stdout is exactly `Usage:` followed by these lines, each indented two spaces, in this order: `ttc help`; `ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]`; `ttc copy <id> [--due YYYY-MM-DD]`; `ttc list [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc done <id>`; `ttc reopen <id>`; `ttc important <id>`; `ttc unimportant <id>`; `ttc postpone <id>`; `ttc rename <id> "<title>"`; `ttc delete <id>`; `ttc clean`; `ttc tag <id> +<t> | -<t>`; `ttc note <id> ["<text>" | --clear]`; `ttc export [<file>] [--format json|csv] [--open|--done|--all|--overdue] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]`; `ttc import <file>`; `ttc stats`; exit code 0
+- [ ] AC-13. Withdrawn by `PD-0017`: the whole `ttc help` output is specified once, by `REQ-0024` AC-8
 - [ ] AC-14. README.md → has a "Copying a task" section documenting `ttc copy <id> [--due YYYY-MM-DD]`: that the new task has the original's title, due date, tags, note and important mark, is open and gets a new id; that `--due` gives it a different due date under the same rule as `ttc add --due`; that it prints `Copied task <id> as task <new-id>`; its refusals (`ttc: no task with id <id>`, `ttc: invalid date: <d>`, `ttc: no task id is left`); and that only the new task is added. It does not present copying and then deleting as a way to change a due date
-- [ ] AC-15. `npm test` runs `node:test` tests covering AC-1 to AC-13, and the test oracle and the argument fuzzing cover `ttc copy` and its `--due` cases (C6) → all pass; the pull request delivering this story → the CI `test` check passes
+- [ ] AC-15. `npm test` runs `node:test` tests covering AC-1 to AC-12 → all pass; the pull request delivering this story → the CI `test` check passes
 
 ## Sequencing
 
@@ -148,8 +148,8 @@ chosen, `PD-0013` item 15):
 - **C3**: the success line, the usage line and its position, the id-limit refusal, the check order and the `--due` rules are fixed text (`PD-0013` items 2–6, 11); tests assert them exactly. No other new message is needed: the copied fields were validated on read.
 - **C4**: no stored-format change: the copy holds only fields format 4 already has, and the file stays version 4. Older files are read, copied without error, and written as version 4 by a successful copy (`PD-0010` items 1, 3, 4).
 - **C5**: the copy is made from the original's stored form: title, due date (or none), tags (as stored, lower case), note (or none) and important mark are taken as stored, the status is open, and nothing else is copied. The original and every other task keep every field and their stored order; a done original stays done (`PD-0004` item 8, `PD-0009` item 4).
-- **C6**: the test oracle (`test/support/ttc-model.js`, its `USAGE` and `COMMANDS`) and the argument fuzzing (`fuzz-gen.js`, `fuzz-harness.js`) gain `copy`, written from `PD-0013`, not from the new code, including the id rule copy shares with `add` and the `--due` cases: valid, invalid, past, `9999-12-31`, missing value, given twice, before and after the id, on an original with and without a due date. The three unit tests that list the whole usage (`test/important.test.js`, `test/clean.test.js`, `test/postpone.test.js`) gain the new line.
-- **C7**: the perf guard (10,000 tasks, median < 500 ms) must still pass.
+- **C6**: withdrawn by `PD-0017`: no test oracle, argument fuzzing or whole-usage test copies.
+- **C7**: withdrawn by `PD-0017`: no perf guard.
 - **C8**: `--due` follows the `ttc add --due` rule exactly: `YYYY-MM-DD`, a real calendar date, a past date allowed, `ttc: invalid date: <d>` otherwise (`PD-0003` item 5), nothing later than `9999-12-31` (`PD-0011` item 6); one value, before or after the id, refused when given twice or with no value (`PD-0003` item 2); checked before the lock, as `add` does.
 - **C9**: `--due` can only set a date; there is no value meaning "no due date" (an empty value is an invalid date), so a copy of a dated original always has a date. With `--due`, a copy of an original with no due date gets one.
 

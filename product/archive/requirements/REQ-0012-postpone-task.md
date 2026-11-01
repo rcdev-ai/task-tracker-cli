@@ -2,11 +2,11 @@
 id: REQ-0012
 type: requirement
 title: A task is postponed from the ttc command line in one short command
-status: accepted
+status: superseded
 revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-11-01
 initiative: INIT-0003
 outcome_element: "O1, O2 and O3 (initiative.md): postpone a task with one short command so it is due later and not overdue; the output names the new due date; nothing else changes"
 acceptance:
@@ -31,10 +31,11 @@ depends_on: [none]
 constraints: ["C1 (technical/assessment.md, round 1)", "C2 (technical/assessment.md, round 1)", "C3 (technical/assessment.md, round 1)", "C4 (technical/assessment.md, round 1)", "C5 (technical/assessment.md, round 1)", "C7 (technical/assessment.md, round 1)", "C8 (technical/assessment.md, round 1)"]
 observability: []
 rollout: none
-readiness: engineering-ready
+readiness: void
 tickets: []
 supersedes:
-superseded_by:
+superseded_by: REQ-0019
+archived_on: 2026-11-01
 ---
 
 # REQ-0012 — A task is postponed from the ttc command line in one short command

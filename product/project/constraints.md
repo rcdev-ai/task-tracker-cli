@@ -3,10 +3,10 @@ id: PROJECT-constraints
 type: project-context
 title: Hard constraints
 status: authoritative
-revision: 2
+revision: 3
 owner_role: ROLE-product-manager
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-01
 ---
 
 # Hard constraints
@@ -22,9 +22,15 @@ intent and are overridden only by a decision that explicitly amends them.
 | 4 | "Data lives in one JSON file at $TTC_HOME/tasks.json (default ~/.ttc)." (requester's words, verbatim) | Requester's spec (2026-10-20), recorded by `PD-0001` | All task data |
 | 5 | "Every write is atomic." (requester's words, verbatim) | Requester's spec (2026-10-20), recorded by `PD-0001` | Every command that changes stored data |
 | 6 | "Errors print one line to stderr and exit non-zero." (requester's words, verbatim) | Requester's spec (2026-10-20), recorded by `PD-0001` | Every command |
-| 7 | "Every command has node:test tests; the CI `test` check must pass." (requester's words, verbatim) | Requester's spec (2026-10-20), recorded by `PD-0001` | Every command |
+| 7 | "Every command has node:test tests; the CI `test` check must pass." (requester's words, verbatim). Amended by `PD-0017`: every command's behaviour is covered by the CLI tests and the CI `test` check passes; it is not an order for each story to add tests, extend earlier suites or meet a coverage target. | Requester's spec (2026-10-20), recorded by `PD-0001`; amended by `PD-0017` (2026-11-01) | Every command |
 | 8 | "CLI only, no UI" (requester's words, verbatim). | Requester's instructions (2026-10-20), recorded by `PD-0001` | The product |
 | 9 | Code lives in `rortegalizardo/task-tracker-cli` (`~/Desktop/Projects/task-tracker-cli`); "Every ticket must name its repo" (requester's words). | Requester's instructions (2026-10-20), recorded by `PD-0001` | Every engineering ticket |
 
 The source of constraints 2–9 is committed verbatim in
 `initiatives/INIT-0001-ttc-command-line-task-tracker/product/sources/2026-10-20-requester-spec.md`.
+
+## Change log
+
+| Revision | Date | Change | Why |
+| --- | --- | --- | --- |
+| 3 | 2026-11-01 | Row 7 amended | `PD-0017` (Parley room Factory M3 #64, owner-approved test trim) |

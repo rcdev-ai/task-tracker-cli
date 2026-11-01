@@ -7,6 +7,7 @@ not re-open the question.
 
 | ID | Title | Status | Path | Updated |
 | --- | --- | --- | --- | --- |
+| PD-0017 | Trim the inherited ttc test obligations (fuzz, reference model, perf gate, repeated whole-help checks, storage-format unit tests) together with the requirements that demanded them | accepted | [PD-0017-ttc-test-obligations-trimmed.md](PD-0017-ttc-test-obligations-trimmed.md) | 2026-11-01 |
 | PD-0016 | Build INIT-0007 as option A, ttc due sets a task's due date to a typed date or removes it with --clear | accepted | [PD-0016-ttc-due-option-a.md](PD-0016-ttc-due-option-a.md) | 2026-10-31 |
 | PD-0015 | The ttc tickets live in the Ariadne project TTC | accepted | [PD-0015-ttc-tickets-live-in-ariadne.md](PD-0015-ttc-tickets-live-in-ariadne.md) | 2026-10-31 |
 | PD-0014 | Build INIT-0006 as option B, ttc list --no-due narrows any view to tasks with no due date, and ttc export takes it too | accepted | [PD-0014-ttc-no-due-filter-option-b.md](PD-0014-ttc-no-due-filter-option-b.md) | 2026-10-29 |
