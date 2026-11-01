@@ -70,14 +70,18 @@ ttc postpone <id>
 ## Changing a due date
 
 ```
-ttc due <id> YYYY-MM-DD
+ttc due <id> YYYY-MM-DD | --clear
 ```
 
 - Sets the due date of an open or done task, with or without an existing due date.
 - The date must be `YYYY-MM-DD`, a real calendar date. Past dates are allowed; nothing later than `9999-12-31` is accepted. An invalid date is refused with `ttc: invalid date: <d>`.
 - Prints `Set due date of task <id> to <d>`.
 - Setting the date the task already has succeeds the same way.
+- `--clear` removes the due date of an open or done task, prints `Cleared due date of task <id>` and exits 0.
+- On a task with no due date, `--clear` prints `Task <id> has no due date`, changes nothing, writes nothing and exits 0.
+- Giving a date and `--clear` together is refused with `ttc: due date and --clear cannot be combined`.
 - Only the selected task's due date changes.
+- A task without a due date shows in `ttc list --no-due` if it is open; use `ttc list --done --no-due` for done tasks.
 
 Example: with task 1 already stored, run:
 
@@ -89,6 +93,18 @@ Output:
 
 ```
 Set due date of task 1 to 2099-11-10
+```
+
+To remove that due date, run:
+
+```
+ttc due 1 --clear
+```
+
+Output:
+
+```
+Cleared due date of task 1
 ```
 
 ## Cleaning out done tasks
