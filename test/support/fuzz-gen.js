@@ -6,14 +6,14 @@
 //   files  { 'path relative to the case folder': { kind: 'file', bytes } | { kind: 'dir' } }
 //   label  a short class name, counted by the harness's coverage floor
 //   expectedStderr / expectedStderrPrefix  requirement-owned error expectations
-//     for the bounded PD-0014 / AC-6 / AC-7 cases, never read from the command
+//     for the bounded PD-0014 / PD-0016 cases, never read from the command
 //
 // The generators only aim; the reference model decides what is valid. They
 // never emit NUL or a lone surrogate in argv (a real argv cannot carry them),
 // and never an absolute path or "..".
 
 const MAX_SAFE = Number.MAX_SAFE_INTEGER;
-const COMMANDS = ['help', 'add', 'copy', 'list', 'done', 'reopen', 'important', 'unimportant', 'postpone', 'rename', 'delete', 'clean', 'tag', 'note', 'export', 'import', 'stats'];
+const COMMANDS = ['help', 'add', 'copy', 'list', 'done', 'reopen', 'important', 'unimportant', 'postpone', 'due', 'rename', 'delete', 'clean', 'tag', 'note', 'export', 'import', 'stats'];
 
 const DIR = { kind: 'dir' };
 const file = (bytes) => ({ kind: 'file', bytes: Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes, 'utf8') });
@@ -254,6 +254,9 @@ function buildUnits(r, cmd, list, junkP, importTarget) {
       positionals.push(pos(id()));
       if (r.chance(0.5)) options.push(opt('--due', date()));
       break;
+    case 'due':
+      positionals.push(pos(id()), pos(date()));
+      break;
     case 'list':
       filterOptions();
       break;
@@ -416,9 +419,48 @@ function noDueCases() {
 
 const NO_DUE_CASES = noDueCases();
 
+// PD-0016 set-form only: fixed errors establish precedence independently of
+// the generic oracle. Reuse the mixed dated/undated, open/done fixture above.
+function dueCases() {
+  const cases = [];
+  const add = (args, message, files = { [STORED]: file(canonicalText(NO_DUE_LIST)) }) => {
+    const c = { argv: ['due', ...args], label: 'due', files };
+    if (message !== undefined) c.expectedStderr = 'ttc: ' + message + '\n';
+    cases.push(c);
+    return c;
+  };
+  add(['1', '2099-11-10']);
+  add(['002', '9999-12-31']);
+  add(['4', '2000-01-02']);
+  for (const date of ['2026-02-30', '2026-1-05', '10000-01-01', 'tomorrow']) {
+    add(['1', date], 'invalid date: ' + date);
+  }
+  add(['abc', '2099-11-10'], 'invalid task id: abc');
+  add(['0', '2099-11-10'], 'invalid task id: 0');
+  add(['2099-11-10', '1'], 'invalid task id: 2099-11-10');
+  add(['99', '2099-11-10'], 'no task with id 99');
+  add(['abc', '2026-02-30'], 'invalid task id: abc');
+  add(['99', '2026-02-30'], 'invalid date: 2026-02-30');
+  add([], 'missing argument: <id>');
+  // Its wording remains unspecified, while exit, one-line shape and untouched
+  // file tree are checked by the existing harness in both execution modes.
+  add(['1']).expectedStderrPrefix = 'ttc: ';
+  add(['abc'], 'invalid task id: abc');
+  add(['abc', '2026-02-30', 'extra'], 'unexpected argument: extra');
+  add(['--bogus', 'abc', '2026-02-30'], 'unknown option: --bogus');
+  const corrupt = { [STORED]: file('not json') };
+  add(['1', '2026-02-30'], 'invalid date: 2026-02-30', corrupt);
+  add(['1', '2099-11-10'], undefined, corrupt).expectedStderrPrefix = 'ttc: cannot read ';
+  add(['1', '2099-11-10'], 'no task with id 1', {});
+  return cases;
+}
+
+const DUE_CASES = dueCases();
+const REQUIRED_ARGS_CASES = [...NO_DUE_CASES, ...DUE_CASES];
+
 function genArgsCase(r, index) {
-  if (index % ARGS_SAMPLE_EVERY === 0 && index / ARGS_SAMPLE_EVERY < NO_DUE_CASES.length) {
-    return NO_DUE_CASES[index / ARGS_SAMPLE_EVERY];
+  if (index % ARGS_SAMPLE_EVERY === 0 && index / ARGS_SAMPLE_EVERY < REQUIRED_ARGS_CASES.length) {
+    return REQUIRED_ARGS_CASES[index / ARGS_SAMPLE_EVERY];
   }
   // State first: the argument builder aims at ids that exist.
   const files = {};
@@ -679,4 +721,4 @@ function genDataCase(r, index) {
   return { argv: [cmd, ...flatten(units)], files, label: kind };
 }
 
-module.exports = { genArgsCase, genDataCase, ARGS_LABELS, DATA_KINDS, COMMANDS, ARGS_SAMPLE_EVERY, NO_DUE_CASES };
+module.exports = { genArgsCase, genDataCase, ARGS_LABELS, DATA_KINDS, COMMANDS, ARGS_SAMPLE_EVERY, NO_DUE_CASES, DUE_CASES, REQUIRED_ARGS_CASES };
