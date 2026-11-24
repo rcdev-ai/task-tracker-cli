@@ -23,6 +23,13 @@ all filters and their combinations, note search, argument errors, and unchanged
 storage. `test/export.test.js` checks that export refuses the list-only `--count`
 option. Run these with `node --test test/list.test.js test/export.test.js`.
 
+Stored-list recovery coverage: `test/list.test.js` checks the exact repair/import
+hint for invalid list content, JSON and UTF-8, including `--count`, and checks
+real permission-denied and folder reads without hints. `test/exit-codes.test.js`
+checks the upgrade-only hint for a newer format. Failed reads preserve the data.
+`test/important.test.js` checks that stored-file hints do not appear in import
+errors. `test/import.test.js` checks that a valid import replaces a damaged list.
+
 ## Adding a task
 
 ```
@@ -229,7 +236,23 @@ id,title,status,due,tags,note
 - Files written by older ttc (versions 1, 2 and 3) are read as-is by read-only commands, with no task important, and rewritten as version 4 by the next changing command.
 - `ttc import` accepts versions 1, 2, 3 and 4.
 - After the first change, an older ttc can no longer read `tasks.json` or a new JSON export: no command writes an older version.
-- A file from a newer ttc is refused with one `ttc: cannot read` line and left unchanged.
+- A file from a newer ttc is refused with one `ttc: cannot read` line ending in `; upgrade ttc` and left unchanged.
+
+If `tasks.json` is not valid UTF-8, JSON or task-list content, its one-line
+`ttc: cannot read <path>: <reason>` error ends in
+`; fix the file or replace it with ttc import <file>`. For example, a file
+containing `[]` gives:
+
+```text
+ttc: cannot read <path>: the list is not an object; fix the file or replace it with ttc import <file>
+```
+
+`<path>` is the path to `tasks.json`; `<file>` is a usage placeholder for a valid
+JSON import file, such as an earlier JSON export. `ttc import <file>` replaces
+the whole list, including a damaged destination; it never merges. Failed reads
+leave the file unchanged. OS read failures, such as permission denied or a
+folder at the file path, carry no recovery hint. Invalid import-source errors
+also carry no stored-file recovery hint.
 
 ## Exit codes
 

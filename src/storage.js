@@ -174,7 +174,8 @@ const FORMATS = [
 
 const CURRENT_VERSION = FORMATS[FORMATS.length - 1].version;
 
-// The format version a parsed document claims: { version } or { problem }.
+// The format version a parsed document claims: { version } or { problem },
+// with newerVersion: true only for a valid version above CURRENT_VERSION.
 // No "version" key is version 1; so is anything that is not an object, so the
 // version 1 check reports it as before. The version is judged before any
 // layout check, because a newer file may have any layout.
@@ -188,6 +189,7 @@ function fileVersion(data) {
     return {
       problem:
         'it was written by a newer ttc (format version ' + v + '; this ttc reads up to version ' + CURRENT_VERSION + ')',
+      newerVersion: true,
     };
   }
   return { version: v };
@@ -220,8 +222,10 @@ function serializeList(list) {
 // The one parse path for stored lists and import files: detect the version,
 // check the document as that version, upgrade it step by step to the current
 // version, check it again, and return the list without its version. Returns
-// { list } or { problem }; never throws. A whole number JSON.parse would round (above
-// 2^53-1) becomes NaN, so the id and nextId checks refuse it.
+// { list } or { problem }, with newerVersion: true only for a newer format;
+// problem remains the original reason, without recovery guidance. Never throws.
+// A whole number JSON.parse would round (above 2^53-1) becomes NaN, so the id
+// and nextId checks refuse it.
 function parseList(text) {
   let data;
   try {
@@ -240,7 +244,7 @@ function parseList(text) {
     return { problem: 'not valid JSON' };
   }
   const found = fileVersion(data);
-  if (found.problem !== undefined) return { problem: found.problem };
+  if (found.problem !== undefined) return found;
   let doc = data;
   let problem = FORMATS[found.version - 1].validate(doc);
   if (problem !== null) return { problem };
@@ -273,10 +277,13 @@ function readList(env) {
     if (err.code === 'ENOENT') return { nextId: 1, tasks: [] };
     throw fail(reasonOf(err));
   }
+  const repairHint = '; fix the file or replace it with ttc import <file>';
   const text = decodeUtf8(bytes);
-  if (text === null) throw fail('not valid UTF-8');
+  if (text === null) throw fail('not valid UTF-8' + repairHint);
   const parsed = parseList(text);
-  if (parsed.problem !== undefined) throw fail(parsed.problem);
+  if (parsed.problem !== undefined) {
+    throw fail(parsed.problem + (parsed.newerVersion ? '; upgrade ttc' : repairHint));
+  }
   return parsed.list;
 }
 

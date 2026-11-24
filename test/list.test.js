@@ -177,15 +177,48 @@ test('list invalid arguments fail with the exact line (criterion 16)', () => {
 test('an unreadable tasks.json fails and stays as it is (criterion 18)', () => {
   const sb = sandbox();
   fs.mkdirSync(sb.dataDir, { recursive: true });
-  fs.writeFileSync(sb.file, '{');
-  const escaped = sb.file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  for (const args of [[], ['--count']]) {
-    const r = ttc(sb, 'list', ...args);
+  const fixtures = [
+    [Buffer.from('[]'), 'the list is not an object'],
+    [Buffer.from('{'), 'not valid JSON'],
+    [Buffer.from([0xff]), 'not valid UTF-8'],
+    [Buffer.from('{"version":"5"}'), 'the version is not a whole number of 1 or more'],
+  ];
+  for (const [bytes, reason] of fixtures) {
+    fs.writeFileSync(sb.file, bytes);
+    for (const args of [[], ['--count']]) {
+      const r = ttc(sb, 'list', ...args);
+      assert.equal(r.status, 1);
+      assert.equal(r.stdout, '');
+      assert.equal(r.stderr, 'ttc: cannot read ' + sb.file + ': ' + reason + '; fix the file or replace it with ttc import <file>\n');
+      assert.deepEqual(fs.readFileSync(sb.file), bytes);
+    }
+  }
+});
+
+test('list OS read failures give no recovery hint and leave the data unchanged', () => {
+  assert.notEqual(process.getuid(), 0, 'permission coverage requires a non-root user');
+  const sb = sandbox();
+  seed(sb, L);
+  const before = fs.readFileSync(sb.file);
+  const mode = fs.statSync(sb.file).mode;
+  try {
+    fs.chmodSync(sb.file, 0o000);
+    const r = ttc(sb, 'list');
     assert.equal(r.status, 1);
     assert.equal(r.stdout, '');
-    assert.match(r.stderr, new RegExp('^ttc: cannot read ' + escaped + ': .+\\n$'));
-    assert.equal(fs.readFileSync(sb.file, 'utf8'), '{');
+    assert.equal(r.stderr, 'ttc: cannot read ' + sb.file + ': permission denied\n');
+  } finally {
+    fs.chmodSync(sb.file, mode);
   }
+  assert.deepEqual(fs.readFileSync(sb.file), before);
+
+  const folder = sandbox();
+  fs.mkdirSync(folder.file, { recursive: true });
+  const r = ttc(folder, 'list');
+  assert.equal(r.status, 1);
+  assert.equal(r.stdout, '');
+  assert.equal(r.stderr, 'ttc: cannot read ' + folder.file + ': it is a folder\n');
+  assert.deepEqual(fs.readdirSync(folder.file), []);
 });
 
 test('ttc help lists the list usage line (criterion 19)', () => {
