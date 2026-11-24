@@ -3,12 +3,18 @@
 Task tracker CLI. Node.js, built-in libraries only.
 
 Install from a clone with `npm install --global .`, then run `ttc help`.
-`npm test` runs the test suite.
-`npm run lint` checks every source and test file for syntax errors.
 
 ## Testing
 
+`npm test` runs the test suite.
+`npm run lint` checks every source and test file for syntax errors.
+
 - `test/cli.test.js`: `ttc -h matches --help and help without creating or changing task data` compares complete help output and checks that missing task directories stay absent and an existing task file keeps its bytes and modification time.
+
+The `ttc --version` case in `test/cli.test.js` checks the runtime package version,
+exact output and exit codes, refusal of extra arguments, and that missing task
+data stays absent and existing task data stays unchanged, including the default HOME.
+Run the CLI cases with `node --test test/cli.test.js`.
 
 ## Task notes
 

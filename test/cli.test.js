@@ -20,6 +20,42 @@ function usageLines(stdout) {
   return stdout.split('\n').map((l) => l.trim());
 }
 
+test('ttc --version reads the package version, refuses extra arguments and leaves task data untouched', (t) => {
+  const { version } = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+  const scratch = path.join(__dirname, '..', '.scratch');
+  fs.mkdirSync(scratch, { recursive: true });
+  const base = fs.mkdtempSync(path.join(scratch, 'version-'));
+  t.after(() => fs.rmSync(base, { recursive: true, force: true }));
+
+  const missing = path.join(base, 'missing');
+  const existing = path.join(base, 'existing');
+  fs.mkdirSync(existing);
+  const file = path.join(existing, 'tasks.json');
+  const bytes = Buffer.from('{ "version": 4, "nextId": 1, "tasks": [] }\n');
+  fs.writeFileSync(file, bytes);
+
+  for (const ttcHome of [path.join(missing, 'data'), existing, undefined]) {
+    const r = ttc(['--version'], { ttcHome });
+    t.after(() => fs.rmSync(r.home, { recursive: true, force: true }));
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(r.stdout, version + '\n');
+    assert.equal(r.stderr, '');
+    assert.deepEqual(fs.readdirSync(r.home), []);
+    assert.equal(fs.existsSync(missing), false);
+    assert.deepEqual(fs.readFileSync(file), bytes);
+    assert.deepEqual(fs.readdirSync(existing), ['tasks.json']);
+  }
+
+  const r = ttc(['--version', 'extra'], { ttcHome: existing });
+  t.after(() => fs.rmSync(r.home, { recursive: true, force: true }));
+  assert.equal(r.status, 1);
+  assert.equal(r.stdout, '');
+  assert.equal(r.stderr, 'ttc: unexpected argument: extra\n');
+  assert.deepEqual(fs.readdirSync(r.home), []);
+  assert.deepEqual(fs.readFileSync(file), bytes);
+  assert.deepEqual(fs.readdirSync(existing), ['tasks.json']);
+});
+
 for (const args of [[], ['help'], ['--help']]) {
   test(`ttc ${args.join(' ')} prints the usage and creates nothing (criteria 1-4)`, () => {
     const base = fs.mkdtempSync(path.join(os.tmpdir(), 'ttc-'));
