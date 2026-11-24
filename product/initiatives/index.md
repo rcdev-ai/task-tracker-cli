@@ -13,6 +13,7 @@ here and remain in place on disk.
 | INIT-0005 | A new task is made from an existing one without retyping it | active | [INIT-0005-copy-a-task/initiative.md](INIT-0005-copy-a-task/initiative.md) | 2026-10-29 |
 | INIT-0006 | Tasks with no due date are listed on their own in one short command | active | [INIT-0006-tasks-without-due-date/initiative.md](INIT-0006-tasks-without-due-date/initiative.md) | 2026-10-29 |
 | INIT-0007 | A task's due date is changed or removed in one short command | active | [INIT-0007-change-or-clear-due-date/initiative.md](INIT-0007-change-or-clear-due-date/initiative.md) | 2026-10-31 |
+| INIT-0008 | A task added with a due date in the past gets a warning | draft | [INIT-0008-warn-past-due-date/initiative.md](INIT-0008-warn-past-due-date/initiative.md) | 2026-11-24 |
 
 To create one: allocate `INIT-nnnn` from `../manifest.yaml`, copy
 `../templates/initiative.md` into `INIT-nnnn-<slug>/initiative.md`, create
