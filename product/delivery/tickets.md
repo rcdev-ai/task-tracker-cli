@@ -33,6 +33,7 @@ but re-sync before acting on it destructively (branching, closing, shipping).
 | RCDEV-864 | Tasks with no due date are listed on their own in one short command | INIT-0006 | REQ-0015 |  |  |  | Backlog |
 | TTC-1 | A task's due date is set to a chosen date in one short command | INIT-0007 | REQ-0016 |  |  |  | Backlog |
 | TTC-2 | A task's due date is removed in one short command | INIT-0007 | REQ-0017 | TTC-1 |  |  | Backlog |
+| TTC-868 | A task added with a due date in the past gets a one-line warning | INIT-0008 | REQ-0025 |  |  |  | Backlog |
 
 Empty `Depends on` = on the executable frontier. Tracker keys verbatim.
 Status is advisory once older than `freshness_window`.
