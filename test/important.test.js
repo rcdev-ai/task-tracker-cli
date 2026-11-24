@@ -240,6 +240,7 @@ test('AC-12: version 5, a bad mark and a missing mark are refused on read and on
     assert.equal(ri.status, 1, name);
     assert.equal(ri.stdout, '', name);
     assert.ok(ri.stderr.startsWith('ttc: invalid import file bad.json: '), name + ': ' + ri.stderr);
+    assert.doesNotMatch(ri.stderr, /; fix the file|; upgrade ttc/, name);
     assert.equal(ri.stderr.split('\n').length, 2, name);
     assert.deepEqual(fileBytes(imp), keep, name);
   }

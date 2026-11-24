@@ -142,7 +142,10 @@ test('exit code: list fails on a file from a newer ttc and leaves it unchanged',
   fs.mkdirSync(sb.dataDir, { recursive: true });
   fs.writeFileSync(sb.file, '{"version": 5, "nextId": 1, "tasks": []}');
   const before = fs.readFileSync(sb.file);
-  assertFailure(await ttc(sb, ['list']), /newer ttc/);
+  const r = await ttc(sb, ['list']);
+  assertFailure(r);
+  assert.equal(r.stderr, 'ttc: cannot read ' + sb.file + ': it was written by a newer ttc (format version 5; this ttc reads up to version 4); upgrade ttc\n');
+  assert.doesNotMatch(r.stderr, /fix the file|ttc import/);
   assert.deepEqual(fs.readFileSync(sb.file), before);
 });
 
