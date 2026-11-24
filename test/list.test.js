@@ -37,6 +37,20 @@ const LINE1 = '#1 [ ] Pay rent due:2099-12-31 +bills +home\n';
 const LINE2 = '#2 [x] Call Ann +bills\n';
 const LINE3 = '#3 [ ] Read +home\n';
 
+// Compare count mode with both the known task count and the actual list output.
+// The empty-state message represents zero tasks, despite occupying one line.
+function assertCount(sb, args, stdout) {
+  const before = fs.existsSync(sb.file) ? fs.readFileSync(sb.file) : null;
+  const r = ttc(sb, 'list', ...args, '--count');
+  const expected = stdout === 'No tasks.\n' ? 0 : stdout.trimEnd().split('\n').length;
+  assert.equal(r.status, 0, JSON.stringify(args));
+  assert.equal(r.stderr, '');
+  assert.equal(r.stdout, expected + '\n');
+  assert.equal(Number(r.stdout), stdout.split('\n').filter((line) => line.startsWith('#')).length);
+  if (before === null) assert.equal(fs.existsSync(sb.file), false);
+  else assert.deepEqual(fs.readFileSync(sb.file), before);
+}
+
 // Success on list L: exact stdout, empty stderr, exit 0, and tasks.json
 // byte-for-byte unchanged (criterion 17).
 function assertListed(args, stdout) {
@@ -48,6 +62,7 @@ function assertListed(args, stdout) {
   assert.equal(r.stderr, '');
   assert.equal(r.stdout, stdout);
   assert.deepEqual(fs.readFileSync(sb.file), before);
+  assertCount(sb, args, r.stdout);
 }
 
 // Failure on list L: exit 1, nothing on stdout, one stderr line (the exact
@@ -71,6 +86,7 @@ for (const args of [[], ['--open'], ['--done'], ['--all']]) {
     assert.equal(r.status, 0);
     assert.equal(r.stderr, '');
     assert.equal(r.stdout, 'No tasks.\n');
+    assertCount(sb, args, r.stdout);
     assert.equal(fs.existsSync(sb.dataDir), false);
     assert.equal(fs.existsSync(path.join(sb.home, '.ttc')), false);
   });
@@ -151,20 +167,25 @@ for (const args of [['extra'], ['--tag'], ['--tag', 'home', '--tag', 'bills'], [
   });
 }
 
-test('list --tag with an invalid tag fails with the exact line (criterion 16)', () => {
+test('list invalid arguments fail with the exact line (criterion 16)', () => {
   assertFails(['--tag', 'two words'], 'ttc: invalid tag: two words');
+  assertFails(['--count', '--count'], 'ttc: option given twice: --count');
+  assertFails(['--count', '--no-due', '--overdue'], 'ttc: options cannot be combined: --overdue --no-due');
+  assertFails(['--count', '1'], 'ttc: unexpected argument: 1');
 });
 
 test('an unreadable tasks.json fails and stays as it is (criterion 18)', () => {
   const sb = sandbox();
   fs.mkdirSync(sb.dataDir, { recursive: true });
   fs.writeFileSync(sb.file, '{');
-  const r = ttc(sb, 'list');
-  assert.equal(r.status, 1);
-  assert.equal(r.stdout, '');
   const escaped = sb.file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  assert.match(r.stderr, new RegExp('^ttc: cannot read ' + escaped + ': .+\\n$'));
-  assert.equal(fs.readFileSync(sb.file, 'utf8'), '{');
+  for (const args of [[], ['--count']]) {
+    const r = ttc(sb, 'list', ...args);
+    assert.equal(r.status, 1);
+    assert.equal(r.stdout, '');
+    assert.match(r.stderr, new RegExp('^ttc: cannot read ' + escaped + ': .+\\n$'));
+    assert.equal(fs.readFileSync(sb.file, 'utf8'), '{');
+  }
 });
 
 test('ttc help lists the list usage line (criterion 19)', () => {
@@ -173,7 +194,7 @@ test('ttc help lists the list usage line (criterion 19)', () => {
   const lines = r.stdout.split('\n').map((l) => l.trim());
   assert.ok(lines.includes('ttc help'));
   assert.ok(lines.includes('ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]'));
-  assert.ok(lines.includes('ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]'));
+  assert.ok(lines.includes('ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>] [--count]'));
 });
 
 // Due-range and title-search filters (RCDEV-839).
@@ -216,6 +237,7 @@ function listedF(args, stdout) {
   assert.equal(r.stderr, '');
   assert.equal(r.stdout, stdout);
   assert.deepEqual(fs.readFileSync(sb.file), before);
+  assertCount(sb, args, r.stdout);
 }
 
 function failsF(args, line) {
@@ -254,10 +276,13 @@ test('list --search finds a task by its note alone, in any letter case (AC-3)', 
     { id: 1, title: 'Pay rent', status: 'open', due: null, tags: [], note: 'landlord prefers bank transfer' },
     { id: 2, title: 'Read', status: 'open', due: null, tags: [], note: null },
   ] });
+  const before = fs.readFileSync(sb.file);
   for (const needle of ['transfer', 'TRANSFER', 'Transfer']) {
     const r = ttc(sb, 'list', '--search', needle);
     assert.equal(r.status, 0);
     assert.equal(r.stdout, '#1 [ ] Pay rent\n');
+    assertCount(sb, ['--search', needle], r.stdout);
+    assert.deepEqual(fs.readFileSync(sb.file), before);
   }
 });
 
@@ -316,6 +341,7 @@ test('RCDEV-864 AC-1–AC-4 and AC-9: no-due narrows views without changing exis
     [['list', '--done', '--no-due'], bike],
     [['list', '--all', '--no-due'], plants + mom + bike],
     [['list', '--no-due', '--tag', 'home'], mom],
+    [['list', '--no-due', '--tag', 'home', '--search', 'mom'], mom],
     [['list', '--tag', 'home', '--all', '--no-due'], mom + bike],
     [['list', '--search', 'plant', '--no-due'], plants],
     [['list', '--no-due', '--tag', 'bills'], 'No tasks.\n'],
@@ -333,6 +359,7 @@ test('RCDEV-864 AC-1–AC-4 and AC-9: no-due narrows views without changing exis
     assert.equal(r.stderr, '');
     assert.equal(r.stdout, stdout, JSON.stringify(args));
     assert.deepEqual(fs.readFileSync(sb.file), before);
+    if (args[0] === 'list') assertCount(sb, args.slice(1), r.stdout);
   }
 });
 

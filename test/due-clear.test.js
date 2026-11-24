@@ -172,7 +172,7 @@ test('AC-8: help includes the clear-form usage', (t) => {
     '  ttc help',
     '  ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]',
     '  ttc copy <id> [--due YYYY-MM-DD]',
-    '  ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]',
+    '  ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>] [--count]',
     '  ttc done <id>',
     '  ttc reopen <id>',
     '  ttc important <id>',

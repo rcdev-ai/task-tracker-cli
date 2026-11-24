@@ -20,15 +20,23 @@ function formatTask(task, today) {
 module.exports = {
   name: 'list',
   usage:
-    'ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]',
+    'ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>] [--count]',
   run(args, ctx) {
-    const parsed = parseArgs(args, { positionals: [], options: FILTER_OPTIONS });
+    const parsed = parseArgs(args, {
+      positionals: [],
+      options: { ...FILTER_OPTIONS, '--count': { value: false } },
+    });
     const filter = parseFilter(parsed.options);
 
     // Every check is done before the read. List never writes.
     const list = readList();
     const today = localToday();
     const shown = [...list.tasks].filter(taskFilter(filter, today)).sort((a, b) => b.important - a.important || a.id - b.id);
+
+    if (parsed.options['--count']) {
+      ctx.stdout.write(shown.length + '\n');
+      return;
+    }
 
     ctx.stdout.write(
       shown.length === 0 ? 'No tasks.\n' : shown.map((t) => formatTask(t, today) + '\n').join(''),
