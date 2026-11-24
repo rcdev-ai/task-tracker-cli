@@ -6,10 +6,12 @@ Install from a clone with `npm install --global .`, then run `ttc help`.
 
 ## Testing
 
-`npm test` runs the test suite.
+`npm test` runs the CLI behavior suite with `node:test` through `npm run test:unit`.
 `npm run lint` checks every source and test file for syntax errors.
 
 - `test/cli.test.js`: `ttc -h matches --help and help without creating or changing task data` compares complete help output and checks that missing task directories stay absent and an existing task file keeps its bytes and modification time.
+- `test/add.test.js`: checks the exact past-date warning, confirmation, exit code and saved task fields; silence for future or missing dates; and the today/yesterday boundary in `Pacific/Pago_Pago` and `Pacific/Kiritimati`. Invalid arguments and corrupt data produce only the error and leave stored bytes unchanged. The export/copy/due/import workflow checks that those commands emit no warning, even with past dates.
+- `test/exit-codes.test.js`: checks that closed stdout exits 1 with the added task saved and no past-date warning; closed stderr makes a past-date add exit 1 with its task saved, while a future-date add still exits 0 with its confirmation. Stream failures never show a stack trace or terminate by signal.
 
 The `ttc --version` case in `test/cli.test.js` checks the runtime package version,
 exact output and exit codes, refusal of extra arguments, and that missing task
@@ -20,6 +22,20 @@ Run the CLI cases with `node --test test/cli.test.js`.
 all filters and their combinations, note search, argument errors, and unchanged
 storage. `test/export.test.js` checks that export refuses the list-only `--count`
 option. Run these with `node --test test/list.test.js test/export.test.js`.
+
+## Adding a task
+
+```
+ttc add "<title>" [--due YYYY-MM-DD] [--tag <t>]... [--note "<text>"] [--important]
+```
+
+A due date before today (the local date of your machine) prints exactly one
+line on stderr: `ttc: warning: due date <d> is in the past`, where `<d>` is
+the due date. The task is still added and saved, stdout remains
+`Added task <id>`, and the command exits 0. The warning follows the stdout
+confirmation. A due date of today or later, or no due date, prints no warning.
+
+Use `ttc due <id> YYYY-MM-DD` to change the date.
 
 ## Task notes
 
@@ -218,7 +234,10 @@ id,title,status,due,tags,note
 ## Exit codes
 
 - `0`: the command did what was asked. This includes `ttc help`, `No tasks.`, and repeated or no-op actions (for example `done` on a task that is already done).
-- `1`: every failure. ttc then prints exactly one line to stderr, `ttc: <message>`, prints nothing to stdout, and never shows a stack trace. If stderr itself cannot be written, ttc exits 1 silently.
+- `1`: every failure. Failures before saving print exactly one line to stderr, `ttc: <message>`, and nothing to stdout. Output failures after saving follow the rules below. ttc never shows a stack trace. If stderr itself cannot be written, ttc exits 1 without further stderr output.
+
+Exit code 0 can come with the one `ttc: warning: due date <d> is in the past`
+line on stderr for `ttc add`. The exit code, not stderr, tells success from failure.
 
 The failures that exit 1:
 
@@ -230,6 +249,12 @@ The failures that exit 1:
 - data file busy: another ttc command still holds it after a 10-second wait
 - output could not be written (for example stdout closed by `head`)
 
-A failure changes no stored data, with one exception. When a changing command has already saved its change and then cannot print its confirmation line (stdout closed), it exits 1, but the change was already saved and is not undone; `ttc list` shows it. Every failure found before the save changes nothing.
+A failure changes no stored data unless the change was already saved before an
+output failure. If a changing command cannot print its confirmation (stdout
+closed), it exits 1, suppresses any queued warning and prints at most one failure
+line on stderr if it can. If an add's warning cannot be written to stderr, it
+also exits 1; its confirmation may already be on stdout. In both cases the saved
+change is kept, and `ttc list` shows it. Every failure found before the save
+changes nothing.
 
 A ttc process ended by a signal (Ctrl-C, `kill`) gets the shell's signal status (for example 130 after Ctrl-C, 143 after `kill`), not 1.
