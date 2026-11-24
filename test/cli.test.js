@@ -69,6 +69,40 @@ for (const args of [[], ['help'], ['--help']]) {
   });
 }
 
+test('ttc -h matches --help and help without creating or changing task data', (t) => {
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'ttc-'));
+  t.after(() => fs.rmSync(base, { recursive: true, force: true }));
+
+  for (const existing of [false, true]) {
+    const ttcHome = path.join(base, existing ? 'existing' : 'missing', 'data');
+    const file = path.join(ttcHome, 'tasks.json');
+    if (existing) {
+      fs.mkdirSync(ttcHome, { recursive: true });
+      fs.writeFileSync(file, JSON.stringify({ version: 4, nextId: 1, tasks: [] }) + '\n');
+    }
+    const before = existing ? fs.readFileSync(file) : null;
+    const mtime = existing ? fs.statSync(file, { bigint: true }).mtimeNs : null;
+    let expected;
+
+    for (const flag of ['--help', '-h', 'help']) {
+      const r = ttc([flag], { ttcHome });
+      t.after(() => fs.rmSync(r.home, { recursive: true, force: true }));
+      assert.equal(r.status, 0, flag);
+      assert.equal(r.stderr, '', flag);
+      if (flag === '--help') expected = r.stdout;
+      assert.equal(r.stdout, expected, flag);
+      assert.equal(fs.existsSync(path.join(r.home, '.ttc')), false);
+      if (existing) {
+        assert.deepEqual(fs.readFileSync(file), before);
+        assert.equal(fs.statSync(file, { bigint: true }).mtimeNs, mtime);
+      } else {
+        assert.equal(fs.existsSync(file), false);
+        assert.equal(fs.existsSync(path.dirname(ttcHome)), false);
+      }
+    }
+  }
+});
+
 test('ttc help extra is a one-line error (criterion 5)', () => {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'ttc-'));
   const r = ttc(['help', 'extra'], { ttcHome: path.join(base, 'data') });

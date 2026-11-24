@@ -16,7 +16,7 @@ function run(argv, { stdout, stderr }) {
     }
     let name = argv[0];
     let args = argv.slice(1);
-    if (argv.length === 0 || argv[0] === '--help') name = 'help';
+    if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') name = 'help';
     const command = commands.find((c) => c.name === name);
     if (!command) {
       stderr.write('ttc: unknown command: ' + oneLine(name) + ' (see ttc help)\n');
