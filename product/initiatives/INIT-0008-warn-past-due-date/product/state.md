@@ -3,20 +3,20 @@ id: PSTATE-INIT-0008
 type: product-state
 title: Product definition state for INIT-0008
 status: authoritative
-revision: 2
+revision: 3
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
 updated_by_role: ROLE-product-manager
 initiative: INIT-0008
-phase: DISCOVERY
+phase: SOLUTION_EXPLORATION
 phase_entered: 2026-11-24
 requester: "the requester (repository owner), via the driving session, 2026-11-24"
-next_action: "ROLE-product-manager: SKILL-advance-product-phase (DISCOVERY -> PRODUCT_DEFINITION), populate initiative.md, draft the requirement, write the Product Definition Contract"
+next_action: "ROLE-product-manager: dispatch ROLE-planner (PRODUCT-DISCOVERY, product-feasibility-assessment) for verdicts on options A and B, then record the Options table"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
-stories: []
+stories: [REQ-0025]
 design_refs: []
 decisions: []
 ---
@@ -29,8 +29,9 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-DISCOVERY. Triage verdict `new-initiative`; Discovery written (J1, J2, P1–P5,
-`CAP-0001`, signals 1–4, non-goals).
+SOLUTION_EXPLORATION. Outcome O1–O2, out of scope (7 items) and success
+measures 1–6 in `initiative.md` rev 2; draft `REQ-0025`; Product Definition
+Contract written. Architect dispatched for the options below.
 
 ## Problem statement
 
@@ -46,7 +47,7 @@ warning, not a refusal.
 
 ## Next action
 
-ROLE-product-manager: SKILL-advance-product-phase (DISCOVERY -> PRODUCT_DEFINITION), populate initiative.md, draft the requirement, write the Product Definition Contract.
+ROLE-product-manager: dispatch ROLE-planner (PRODUCT-DISCOVERY, product-feasibility-assessment) for verdicts on options A and B, then record the Options table.
 
 ## Blocked by
 
@@ -63,7 +64,7 @@ row drops or narrows a stated need (§4.2), so no `Q-` is raised.
 
 | Date | Ambiguity | Class (`pm-resolvable` / `escalation`) | Resolution or `Q-` |
 | --- | --- | --- | --- |
-| 2026-11-24 | A1. Which commands warn? `ttc add --due` is named. `ttc copy <id> --due <d>` and `ttc due <id> <d>` also take a typed date. | pm-resolvable | Options at SOLUTION_EXPLORATION: `ttc add` only, or every command that takes a typed due date. The request names adding a task; choosing the option that keeps the stated outcome without an unasked addition is the PM's call (§4.1). Recorded in the convergence `PD-`. |
+| 2026-11-24 | A1. Which commands warn? `ttc add --due` is named. `ttc copy <id> --due <d>` and `ttc due <id> <d>` also take a typed date. | pm-resolvable | `ttc add` only, set as scope at PRODUCT_DEFINITION (`initiative.md` out of scope). The request names adding a task ("When I add a task"); keeping the stated outcome without an unasked addition to two more commands is the PM's call (§4.1), and "Keep it simple" points the same way. A later ask can extend the same line to `ttc copy --due` and `ttc due`. Recorded in the convergence `PD-`. |
 | 2026-11-24 | A2. What is "in the past"? | pm-resolvable | Already decided: before today, where today is the date on the user's machine in its local time zone; a date equal to today is not past (`PD-0003` item 6, the overdue test). A task added with a past due date is exactly a task that is overdue from the start. |
 | 2026-11-24 | A3. Warn, or refuse the date? | pm-resolvable | Warn. The request says "Warn me"; a past date stays allowed (`PD-0003` item 5) and the task is still added. Refusing would change `PD-0003` item 5, which nobody asked for. |
 | 2026-11-24 | A4. Ask for confirmation first? | pm-resolvable | No. "No command asks for confirmation" (`PD-0003` item 10), and a question breaks scripted use; "Keep it simple". |
@@ -133,7 +134,14 @@ S2/S3 = the code and README at head `e71f675`.
 
 ## Options
 
-_Written at SOLUTION_EXPLORATION._
+Framed by the PM at SOLUTION_EXPLORATION entry; verdicts to come from the
+architect. Both options keep the task added exactly as today, exit 0, and
+warn only on `ttc add` with a due date before today (`initiative.md` scope).
+
+| Option | User-visible difference | Feasibility verdict | Cost / risk | Trade-off |
+| --- | --- | --- | --- | --- |
+| A — the warning on stderr | stdout stays exactly `Added task <id>`; stderr holds one line, `ttc: warning: due date <d> is in the past` | _pending_ | _pending_ | stdout and every script reading it unchanged; stderr is no longer empty on every exit 0 |
+| B — the warning on stdout | stdout holds `Added task <id>` and then a second line, `Warning: due date <d> is in the past`; stderr stays empty | _pending_ | _pending_ | stderr stays for failures only; a changing command no longer prints exactly one stdout line (`PD-0003` item 10) |
 
 ## Consultation log
 
@@ -151,6 +159,7 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
+| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 1) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
 
 ## Coverage validation
 
@@ -197,6 +206,8 @@ Dates are UTC timestamps.
 | 2026-11-24T07:40:00Z | — | BOOTSTRAP | ROLE-product-manager | Raw request relayed by the driving session | Packet: `readiness: ready`, `scope.initiative: null`, profile S, no areas, no open `Q-` (`Q-0001` answered). `neighbouring` read in full: `CAP-0001` (draft) gives tasks due dates and shows overdue ones, with no warning on a past date; `PD-0003` items 5 (a past date is allowed), 6 (today and overdue), 10 (success output, no confirmation), 11 (errors) bind it; `PD-0004`, `PD-0008`, `PD-0013` (`ttc copy --due`), `PD-0016` (`ttc due`), `PD-0017` (test obligations) and `PD-0015` (Ariadne) neighbour it; no `rejected` `PD-` matches. Ariadne project TTC (56 tickets) has no ticket about warning on a past due date; TTC-865 (`ttc -h`) and TTC-866 (`ttc list --count`) are in progress and do not touch `ttc add`. Advisory, carried: `CAP-0001` is still draft and predates shipped behaviour (code and README at head `e71f675` are the current-state evidence); the working tree has an uncommitted edit to `INIT-0005/delivery/tickets.md` owned by another session, left alone; `project/constraints.md` row 9 names `rortegalizardo/task-tracker-cli`, while `origin` and the driving session name `rcdev-ai/task-tracker-cli` (same local path). Hooks: HOOK-canonical-root pass, HOOK-hydrate pass | `4e3902b0918715b5`, head `e71f675` |
 | 2026-11-24T07:42:00Z | BOOTSTRAP | INTAKE | ROLE-product-manager | Packet emitted, scope resolved to none | Triage verdict `new-initiative`: not `satisfied-by CAP-0001` (`ttc add --due 2020-01-01` prints only `Added task 1`, exit 0, empty stderr at head `e71f675`); not `settled-by` a `PD-` (A12); no constraint forbids it; no initiative or ticket covers it, so not a duplicate; one outcome named. Raw request committed verbatim. `INIT-0008` allocated by `factory init-id --project TTC --after 7` (counter 7 -> 8; `origin/main` `e71f675` at 7). Size: small (≤3 stories expected; the driving session asks for one). Hooks: HOOK-initiative-resolved pass, HOOK-phase-entry pass | `4e3902b0918715b5`, head `e71f675` |
 | 2026-11-24T07:46:00Z | INTAKE | DISCOVERY | ROLE-product-manager | INTAKE exit criteria met: one initiative, one problem, one named requester, ambiguity rows A1–A12 all classified (`pm-resolvable`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DISCOVERY) holds: `initiative.md` at `status: draft`; state at INTAKE with requester, problem statement and a classified ambiguity log. Discovery written (J1, J2, P1–P5, S2 `CAP-0001`, S3 signals 1–4, non-goals). No delegate consulted (optional, read-only; the code and README answer the current state). No `Q-` raised. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `281c20c` |
+| 2026-11-24T07:48:00Z | DISCOVERY | PRODUCT_DEFINITION | ROLE-product-manager | DISCOVERY exit criteria met: problem, user, current state and success signals stated with sources; no open escalation-class ambiguity | Entry precondition (`lifecycle-hooks.md` §3.4.1 PRODUCT_DEFINITION) holds: Discovery has the target user, jobs J1–J2 and problems P1–P5 each with a source (S1), mapping `CAP-0001` (S2), success signals 1–4 (S3) and known non-goals. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `e8d0ff5` |
+| 2026-11-24T07:55:00Z | PRODUCT_DEFINITION | SOLUTION_EXPLORATION | ROLE-product-manager | PRODUCT_DEFINITION exit criteria met: outcome O1–O2, out of scope (7 items), success measures 1–6, draft `REQ-0025` covering O1–O2, Product Definition Contract citing the raw request | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_EXPLORATION) holds: F1 `initiative.md` rev 2 has an outcome and a non-empty out-of-scope section; one `status: draft` `REQ-`; F2 draft-mode coverage (inline, deterministic): J1 -> `REQ-0025` Requirement ("ttc also prints one line saying the due date is in the past"), J2 -> `REQ-0025` (one line, no confirmation, no switch); O1, O2 -> `REQ-0025` `outcome_element`; no `R1` defect. One story (size rule). `requirement` counter 24 -> 25, checked against `origin/main`. Scope choice A1 (`ttc add` only) set in `initiative.md`; recorded in the convergence `PD-`. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `e8d0ff5` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
