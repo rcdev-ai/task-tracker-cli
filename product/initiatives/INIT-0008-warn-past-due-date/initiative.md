@@ -3,14 +3,14 @@ id: INIT-0008
 type: initiative
 title: A task added with a due date in the past gets a warning
 status: draft
-revision: 2
+revision: 3
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
 capabilities: [CAP-0001]
 requirements: [REQ-0025]
 tickets: []
-decisions: []
+decisions: [PD-0018]
 ---
 
 # INIT-0008 — A task added with a due date in the past gets a warning
@@ -66,8 +66,9 @@ P1); the only later sign is the task's `!overdue` token, if the person looks
 2. `ttc add` with a due date of today or later, or without `--due`: stdout,
    stderr (empty), exit code and `tasks.json` are exactly as today.
 3. A `ttc add` that fails, with or without a past due date: exactly one error
-   line on stderr, nothing on stdout, exit 1, `tasks.json` unchanged, as
-   today.
+   line on stderr and no warning, exit 1, as today. A failure before the save
+   prints nothing on stdout and leaves `tasks.json` unchanged; a failure after
+   the save (stdout cannot be written) keeps the task (`PD-0008`).
 4. Every other command, `ttc help` and the data file behave exactly as before.
 5. The README states when the warning appears and what it says.
 6. The CI `test` check passes on the pull request that delivers the story
@@ -98,3 +99,4 @@ None.
 | --- | --- | --- | --- |
 | 2026-11-24 | 1 | Created at INTAKE | Triage verdict `new-initiative` |
 | 2026-11-24 | 2 | Outcome O1–O2, scope, out of scope (7 items), success measures 1–6, `REQ-0025` | PRODUCT_DEFINITION |
+| 2026-11-24 | 3 | `PD-0018`; success measure 3 states the `PD-0008` case (a failure after the save keeps the task) | SOLUTION_CONVERGENCE; architect assumption P4 |

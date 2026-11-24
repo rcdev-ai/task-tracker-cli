@@ -3,7 +3,7 @@ id: REQ-0025
 type: requirement
 title: A task added with a due date in the past gets a one-line warning
 status: draft
-revision: 1
+revision: 2
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
@@ -12,7 +12,7 @@ outcome_element: "O1 and O2 (initiative.md): ttc add with a due date before toda
 acceptance: []
 capabilities: [CAP-0001]
 design_refs: []
-decisions: [PD-0003, PD-0008, PD-0017]
+decisions: [PD-0003, PD-0008, PD-0017, PD-0018]
 depends_on: [none]
 constraints: []
 observability: []
@@ -31,7 +31,8 @@ When a user adds a task with `ttc add` and gives a due date before today, the
 task is still added exactly as today, and ttc also prints one line saying the
 due date is in the past. A due date of today or later, or no due date, gives
 exactly today's output. A failed `ttc add` prints only its one error line.
-Nothing else changes.
+Nothing else changes. Built as option A of `PD-0018`: the warning is one
+stderr line and stdout stays exactly `Added task <id>`.
 
 ## Scope
 
@@ -74,3 +75,4 @@ whole operable signal (`project/constraints.md` row 3).
 ## Notes
 
 - Raw request: `product/sources/2026-11-24-requester-request.md`.
+- Rev 2 (SOLUTION_CONVERGENCE): cites `PD-0018`.

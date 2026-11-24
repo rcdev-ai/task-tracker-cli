@@ -3,22 +3,22 @@ id: PSTATE-INIT-0008
 type: product-state
 title: Product definition state for INIT-0008
 status: authoritative
-revision: 4
+revision: 5
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
 updated_by_role: ROLE-product-manager
 initiative: INIT-0008
-phase: SOLUTION_CONVERGENCE
+phase: DECOMPOSITION
 phase_entered: 2026-11-24
 requester: "the requester (repository owner), via the driving session, 2026-11-24"
-next_action: "ROLE-product-manager: record the chosen-option PD- (option A) and the Solution Contract, then advance to DECOMPOSITION"
+next_action: "ROLE-product-manager: write REQ-0025 Behavior, acceptance criteria and technical constraints from PD-0018 and technical/assessment.md, then dispatch ROLE-planner for story-set coherence round 1"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
 stories: [REQ-0025]
 design_refs: []
-decisions: []
+decisions: [PD-0018]
 ---
 
 # Product definition state — INIT-0008
@@ -29,8 +29,9 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-SOLUTION_CONVERGENCE. Options A and B have architect verdicts
-(`technical/assessment.md` round 1); the PM recommends A (Options below).
+DECOMPOSITION. Option A chosen and recorded as `PD-0018`; Solution Contract
+written (`product/solution-contract.md`); `initiative.md` rev 3, draft
+`REQ-0025` rev 2 cite it.
 
 ## Problem statement
 
@@ -46,7 +47,7 @@ warning, not a refusal.
 
 ## Next action
 
-ROLE-product-manager: record the chosen-option PD- (option A) and the Solution Contract, then advance to DECOMPOSITION.
+ROLE-product-manager: write REQ-0025 Behavior, acceptance criteria and technical constraints from PD-0018 and technical/assessment.md, then dispatch ROLE-planner for story-set coherence round 1.
 
 ## Blocked by
 
@@ -158,6 +159,11 @@ impact stays within `PD-0017` (N4, C9, C10); the README gets an "Adding a
 task" section and one "Exit codes" sentence (N5, C5); one story (N6).
 Success measure 3 gets the `PD-0008` exception (P4) at convergence.
 
+_Chosen (SOLUTION_CONVERGENCE, 2026-11-24):_ **A**, `PD-0018`. B and six
+other shapes rejected for the reasons in `PD-0018` "Options considered".
+N1–N6 settled as the architect recommended (`PD-0018` items 2–12). No option
+is left under consideration.
+
 ## Consultation log
 
 | Date | Delegate role | Question | Answer / verdict | Recorded as |
@@ -177,7 +183,7 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
-| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 1) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
+| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 2) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
 
 ## Coverage validation
 
@@ -227,6 +233,7 @@ Dates are UTC timestamps.
 | 2026-11-24T07:48:00Z | DISCOVERY | PRODUCT_DEFINITION | ROLE-product-manager | DISCOVERY exit criteria met: problem, user, current state and success signals stated with sources; no open escalation-class ambiguity | Entry precondition (`lifecycle-hooks.md` §3.4.1 PRODUCT_DEFINITION) holds: Discovery has the target user, jobs J1–J2 and problems P1–P5 each with a source (S1), mapping `CAP-0001` (S2), success signals 1–4 (S3) and known non-goals. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `e8d0ff5` |
 | 2026-11-24T07:55:00Z | PRODUCT_DEFINITION | SOLUTION_EXPLORATION | ROLE-product-manager | PRODUCT_DEFINITION exit criteria met: outcome O1–O2, out of scope (7 items), success measures 1–6, draft `REQ-0025` covering O1–O2, Product Definition Contract citing the raw request | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_EXPLORATION) holds: F1 `initiative.md` rev 2 has an outcome and a non-empty out-of-scope section; one `status: draft` `REQ-`; F2 draft-mode coverage (inline, deterministic): J1 -> `REQ-0025` Requirement ("ttc also prints one line saying the due date is in the past"), J2 -> `REQ-0025` (one line, no confirmation, no switch); O1, O2 -> `REQ-0025` `outcome_element`; no `R1` defect. One story (size rule). `requirement` counter 24 -> 25, checked against `origin/main`. Scope choice A1 (`ttc add` only) set in `initiative.md`; recorded in the convergence `PD-`. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `e8d0ff5` |
 | 2026-11-24T07:58:00Z | SOLUTION_EXPLORATION | SOLUTION_CONVERGENCE | ROLE-product-manager | SOLUTION_EXPLORATION exit criteria met: options A and B recorded, each with a feasibility verdict (`feasible-with-constraints`) and a user-visible trade-off; PM recommends A with reasons | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_CONVERGENCE) holds: X1 two distinguishable options (stderr line vs second stdout line); X2 each verdict in the closed set (`technical/assessment.md` round 1); one Consultation log row for the one delegate response. One architect dispatch (§9d.1), routed by `product.planner` = claude, opus. No design dispatch: no visual surface (`project/constraints.md` row 8; recorded in the convergence `PD-`, §9d.5). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `b3945a4` |
+| 2026-11-24T08:02:00Z | SOLUTION_CONVERGENCE | DECOMPOSITION | ROLE-product-manager | SOLUTION_CONVERGENCE exit criteria met: one accepted `PD-0018` naming option A, B and six other shapes rejected with reasons, consequences (costs first) accepted; indexed in the same commit; `initiative.md` rev 3 and draft `REQ-0025` rev 2 consistent with it (success measure 3 states the `PD-0008` case, P4); no option left under consideration; Solution Contract cites `PD-0018` and records no design concept (no visual surface, `PD-0018` item 12) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DECOMPOSITION) holds: exactly one `status: accepted` chosen-option `PD-` citing a non-`infeasible` verdict (`feasible-with-constraints`, `technical/assessment.md` round 1). HOOK-decision-capture R1 (index row, same commit), R3 (rejected options non-empty), D11 (decision counter 18 matches the highest id; `origin/main` at 17, no `PD-0018` there) pass. No escalation-class question: A keeps every accepted decision, B would amend `PD-0003` item 10 for build cost only (§4.1; escalation-policy §3 route 2). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `2e39e7d` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
