@@ -3,18 +3,18 @@ id: PSTATE-INIT-0008
 type: product-state
 title: Product definition state for INIT-0008
 status: authoritative
-revision: 7
+revision: 8
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
 updated_by_role: ROLE-product-manager
 initiative: INIT-0008
-phase: DECOMPOSITION
+phase: READINESS
 phase_entered: 2026-11-24
 requester: "the requester (repository owner), via the driving session, 2026-11-24"
-next_action: "ROLE-product-manager: run coverage validation (full), accept REQ-0025 and declare convergence"
+next_action: "ROLE-product-manager: dispatch ROLE-product-readiness-reviewer (round 1 of 2, terminal unless it reports a blocking defect) on REQ-0025 rev 4"
 blocked_by: []
-converged: false
+converged: true
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
 stories: [REQ-0025]
 design_refs: []
@@ -29,9 +29,9 @@ these two files never describe the same thing and never share a writer.
 
 ## Where this stands
 
-DECOMPOSITION. Option A chosen and recorded as `PD-0018`; Solution Contract
-written (`product/solution-contract.md`); `initiative.md` rev 3, draft
-`REQ-0025` rev 2 cite it.
+READINESS. `PD-0018` (option A); `REQ-0025` rev 4 accepted after coherence
+round 1 (`coherent`, D1 fixed); coverage validation zero defects;
+convergence declared. Waiting on the independent readiness verdict.
 
 ## Problem statement
 
@@ -47,7 +47,7 @@ warning, not a refusal.
 
 ## Next action
 
-ROLE-product-manager: run coverage validation (full), accept REQ-0025 and declare convergence.
+ROLE-product-manager: dispatch ROLE-product-readiness-reviewer (round 1 of 2, terminal unless it reports a blocking defect) on REQ-0025 rev 4.
 
 ## Blocked by
 
@@ -185,11 +185,33 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
-| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 4) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
+| REQ-0025 | A task added with a due date in the past gets a one-line warning | accepted (rev 4) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
 
 ## Coverage validation
 
-_Written at DECOMPOSITION._
+`SKILL-validate-requirement-coverage`, full mode, run by ROLE-product-manager on
+2026-11-24 against the set on disk (iteration 1: zero defects). Story-set digest:
+`(REQ-0025, 4, 2026-11-24)`; `INIT-0008` revision 3.
+
+Traceability map: O1 (`initiative.md` Outcome) -> `REQ-0025`; O2 -> `REQ-0025`
+(its `outcome_element` names both) -> `CAP-0001` (resolves) -> no `DES-` (no
+visual surface, `PD-0018` item 12) -> `PD-0003`, `PD-0008`, `PD-0017`,
+`PD-0018` (all `accepted`, all indexed) -> no `Q-` open -> no tickets yet.
+
+| Rule | Result | Evidence |
+| --- | --- | --- |
+| R1 | pass | O1 -> accepted `REQ-0025` (AC-1 a past date warns and the task is added as today; AC-2 with other options in any order; AC-4 the day before the local today warns). O2 -> accepted `REQ-0025` (AC-3 a future date or no date, AC-4 today: no warning; AC-5 a failure prints only its line; AC-6, AC-7 output that cannot be written; AC-8 `copy`, `copy --due`, `due`, `import` unchanged; AC-10 every existing test still passes). Success measures 1–6 -> AC-1/2, AC-3/4, AC-5/6, AC-8/10, AC-9, AC-10 |
+| R2 | pass | `REQ-0025`: id = filename = index row (`requirements/index.md`, `accepted`); counter `requirement: 25`; no renumbering; edits are pre-freeze plain edits (rev 1 -> 4) |
+| R3 | pass | `outcome_element` names O1 and O2; `CAP-0001` resolves in `capabilities/index.md` |
+| R4 | pass | No user-facing visual surface (`PD-0018` item 12); `design_refs: []`; no `DES-` on the initiative |
+| R5 | pass | 10 acceptance entries, each a command trigger and its exact stdout, stderr, exit code or file state; AC-9 names the README content, AC-10 `npm test` and the CI `test` check |
+| R6 | pass | `REQ-0025` `depends_on: [none]` |
+| R7 | pass | Stories table: `REQ-0025` `none — on the frontier`; graph of one node, acyclic |
+| R8 | pass | No `blocker` `Q-`; Ambiguity log A1–A12 all `pm-resolvable`; no contradiction found between the story and an accepted `PD-` or `constraints.md` (flag-only). Noted, not a story defect: the code on `main` since PR #63 counts a task due today as overdue, against `PD-0003` item 6; the story binds its boundary to the decision (C1, AC-4) |
+| R9 | pass | `PD-0018` cites `feasible-with-constraints`; coherence verdict `coherent` recorded in the Consultation log, round 1 terminal (no blocking defect); its one non-blocking defect D1 dispositioned `fixed` |
+| R10 | pass | Every `decisions:` entry (`PD-0003`, `PD-0008`, `PD-0017`, `PD-0018`) is `accepted`; no `REQ-` dependency; no open `Q-` |
+| R11 | pass | Out of scope has 7 items; the story's Non-goals mirror them; no AC exercises excluded behaviour (AC-8 checks that `copy --due`, `due` and `import` do **not** warn; no AC refuses or confirms a date, adds a switch, suggests a date or changes help or the data format) |
+| R12 | pass | `INIT-0008`, `REQ-0025`, `CAP-0001`, `PD-0003/0008/0017/0018` resolve through their indexes; file, `id`, frontmatter and index rows agree |
 
 ## Readiness log
 
@@ -236,6 +258,7 @@ Dates are UTC timestamps.
 | 2026-11-24T07:55:00Z | PRODUCT_DEFINITION | SOLUTION_EXPLORATION | ROLE-product-manager | PRODUCT_DEFINITION exit criteria met: outcome O1–O2, out of scope (7 items), success measures 1–6, draft `REQ-0025` covering O1–O2, Product Definition Contract citing the raw request | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_EXPLORATION) holds: F1 `initiative.md` rev 2 has an outcome and a non-empty out-of-scope section; one `status: draft` `REQ-`; F2 draft-mode coverage (inline, deterministic): J1 -> `REQ-0025` Requirement ("ttc also prints one line saying the due date is in the past"), J2 -> `REQ-0025` (one line, no confirmation, no switch); O1, O2 -> `REQ-0025` `outcome_element`; no `R1` defect. One story (size rule). `requirement` counter 24 -> 25, checked against `origin/main`. Scope choice A1 (`ttc add` only) set in `initiative.md`; recorded in the convergence `PD-`. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `e8d0ff5` |
 | 2026-11-24T07:58:00Z | SOLUTION_EXPLORATION | SOLUTION_CONVERGENCE | ROLE-product-manager | SOLUTION_EXPLORATION exit criteria met: options A and B recorded, each with a feasibility verdict (`feasible-with-constraints`) and a user-visible trade-off; PM recommends A with reasons | Entry precondition (`lifecycle-hooks.md` §3.4.1 SOLUTION_CONVERGENCE) holds: X1 two distinguishable options (stderr line vs second stdout line); X2 each verdict in the closed set (`technical/assessment.md` round 1); one Consultation log row for the one delegate response. One architect dispatch (§9d.1), routed by `product.planner` = claude, opus. No design dispatch: no visual surface (`project/constraints.md` row 8; recorded in the convergence `PD-`, §9d.5). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `b3945a4` |
 | 2026-11-24T08:02:00Z | SOLUTION_CONVERGENCE | DECOMPOSITION | ROLE-product-manager | SOLUTION_CONVERGENCE exit criteria met: one accepted `PD-0018` naming option A, B and six other shapes rejected with reasons, consequences (costs first) accepted; indexed in the same commit; `initiative.md` rev 3 and draft `REQ-0025` rev 2 consistent with it (success measure 3 states the `PD-0008` case, P4); no option left under consideration; Solution Contract cites `PD-0018` and records no design concept (no visual surface, `PD-0018` item 12) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DECOMPOSITION) holds: exactly one `status: accepted` chosen-option `PD-` citing a non-`infeasible` verdict (`feasible-with-constraints`, `technical/assessment.md` round 1). HOOK-decision-capture R1 (index row, same commit), R3 (rejected options non-empty), D11 (decision counter 18 matches the highest id; `origin/main` at 17, no `PD-0018` there) pass. No escalation-class question: A keeps every accepted decision, B would amend `PD-0003` item 10 for build cost only (§4.1; escalation-policy §3 route 2). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `2e39e7d` |
+| 2026-11-24T08:12:00Z | DECOMPOSITION | READINESS | ROLE-product-manager | DECOMPOSITION exit criteria met: O1 and O2 -> accepted `REQ-0025` rev 4; it meets the nine points of §10.3 (accepted, one testable outcome, 10 pass/fail ACs, `CAP-0001`, no visual surface so no `DES-`, independently verifiable with the red-`main` condition stated as a Sequencing note, no `blocker` `Q-`, no contradiction, indexed in the same commit); coherence round 1 (terminal) left no open blocking defect; convergence declared (`converged: true`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 READINESS) holds: `converged: true`; `HOOK-traceability` zero defects (Coverage validation, iteration 1); `technical/coherence.md` verdict `coherent`, round 1 terminal under §9d.3, D1 non-blocking and `fixed`; no user-facing story, so no `DES-` needed. AC texts for today's behaviour checked by the PM and by the architect on `node bin/ttc.js` at `e24972c`. Review budget this session: 1 of 6. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5` (carried), head `2b63efb` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not

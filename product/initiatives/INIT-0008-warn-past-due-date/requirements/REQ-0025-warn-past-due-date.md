@@ -2,7 +2,7 @@
 id: REQ-0025
 type: requirement
 title: A task added with a due date in the past gets a one-line warning
-status: draft
+status: accepted
 revision: 4
 owner_role: ROLE-product-manager
 created: 2026-11-24
