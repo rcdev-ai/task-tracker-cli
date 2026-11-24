@@ -2,7 +2,7 @@
 id: INIT-0008
 type: initiative
 title: A task added with a due date in the past gets a warning
-status: draft
+status: active
 revision: 3
 owner_role: ROLE-product-manager
 created: 2026-11-24

@@ -3,16 +3,16 @@ id: PSTATE-INIT-0008
 type: product-state
 title: Product definition state for INIT-0008
 status: authoritative
-revision: 10
+revision: 11
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
 updated_by_role: ROLE-product-manager
 initiative: INIT-0008
-phase: ENGINEERING_READY
+phase: HANDOFF
 phase_entered: 2026-11-24
 requester: "the requester (repository owner), via the driving session, 2026-11-24"
-next_action: "ROLE-product-manager: assemble the Handoff packet and compile delivery/manifest.md, set INIT-0008 active, then advance to HANDOFF"
+next_action: "ROLE-product-manager: create the Ariadne ticket for REQ-0025 (create-tickets-from-stories), write delivery/tickets.md and the Handoff log row; no delivery dispatch"
 blocked_by: []
 converged: true
 readiness_verdict: READY   # none | READY | READY-with-known-issues | NOT READY | void
@@ -32,7 +32,8 @@ these two files never describe the same thing and never share a writer.
 READINESS. `PD-0018` (option A); `REQ-0025` rev 5 accepted after coherence
 round 1 (`coherent`, D1 fixed); coverage validation zero defects;
 convergence declared. Readiness round 1 (terminal): `READY`, no
-conditions, no findings. Assembling the handoff packet.
+conditions, no findings. Handoff packet and `delivery/manifest.md` written;
+`INIT-0008` active. Creating the ticket.
 
 ## Problem statement
 
@@ -48,7 +49,7 @@ warning, not a refusal.
 
 ## Next action
 
-ROLE-product-manager: assemble the Handoff packet and compile delivery/manifest.md, set INIT-0008 active, then advance to HANDOFF.
+ROLE-product-manager: create the Ariadne ticket for REQ-0025 (create-tickets-from-stories), write delivery/tickets.md and the Handoff log row; no delivery dispatch.
 
 ## Blocked by
 
@@ -242,7 +243,36 @@ with no findings rows is invalid output.
 
 ## Handoff packet
 
-_Assembled at ENGINEERING_READY._
+Assembled 2026-11-24 at ENGINEERING_READY by `ROLE-product-manager` against the `READY` verdict of 2026-11-24 (Readiness log, round 1; digest `(REQ-0025, 5, 2026-11-24)`, INIT-0008 rev 3, unchanged on disk). Drafted inline under the size rule (§9d.2): a transcription of existing records.
+
+- **Repository:** `rcdev-ai/task-tracker-cli` (`~/Desktop/Projects/task-tracker-cli`), default branch `main`. `project/constraints.md` row 9 still names `rortegalizardo/task-tracker-cli`; the git remote and `REQ-0025` name `rcdev-ai/task-tracker-cli`.
+- **Outcome:** A person using `ttc` who adds a task with `ttc add` and a due date before today still gets the task added exactly as today, and is also told in one line that the due date is in the past; adding a task with a due date of today or later, or with no due date, prints exactly what it prints today and nothing on stderr; a failed `ttc add` prints only its one error line; no other command, `ttc help` and the data file change (`initiative.md` `## Outcome`, O1–O2).
+- **Stories, in suggested sequence:**
+  1. `REQ-0025` — a task added with a due date in the past gets a one-line warning; `depends_on: [none]`, on the frontier.
+- **Design references and export paths:** none — no user-facing visual surface (`PD-0018` item 12; `project/constraints.md` row 8).
+- **Decisions in force:** `PD-0003`, `PD-0008`, `PD-0017`, `PD-0018` (chosen option A: `ttc add` with a due date before today adds the task as today and prints `ttc: warning: due date <d> is in the past` on stderr, only when it exits 0, after `Added task <id>`; README "Adding a task" section and one "Exit codes" sentence).
+- **Binding technical constraints** (all from `technical/assessment.md`, round 1; carried in `REQ-0025` `## Technical constraints`; C6 and C7 do not apply, option B only):
+  - C1 — "before today" uses the one existing local-date rule: due date before today in string order on `YYYY-MM-DD`, local time zone; today is not past; no second notion of today; boundary per `PD-0018` item 3 and AC-4.
+  - C2 — the warning comes only with a task that was saved; every check and the save finish before any output.
+  - C3 — a failure after the save (stdout cannot be written) leaves at most one stderr line, never the warning; touches the shared output and failure handling, not only `ttc add`.
+  - C4 — stderr unwritable: exit 1 silently, task saved; no special case.
+  - C5 — the warning has the `ttc: ` form of a failure line; README "Exit codes" gains one sentence.
+  - C8 — only `ttc add` changes; `copy --due`, `due`, `import`, help, stored data and the data format stay.
+  - C9 — `PD-0017`: no new suite, oracle, fuzz or perf check; existing past-date tests updated (17 tests in 7 files measured); pinned-`TZ`, midnight-retry pattern for today.
+  - C10 — a "not past" test date is `2099-` or later or computed by the test; `2026-10-01` in `test/add.test.js` is now past.
+- **Explicitly out of scope** (copied from `initiative.md` `## Scope`, Out of scope):
+  - Refusing a past due date, or asking the user to confirm it.
+  - A warning from `ttc copy --due`, `ttc due` or any command other than `ttc add`.
+  - Past dates in a `ttc import` file.
+  - A flag or setting that turns the warning off.
+  - Guessing or suggesting a corrected date.
+  - Checks for other likely typos, such as a date far in the future.
+  - Any change to stored data, the data file format, `ttc help`, or the output of any other command.
+  - Also excluded by `PD-0018` "Options considered": a second stdout line (option B).
+- **Open questions (non-blocking):** none. The verdict carries no conditions or known issues.
+- **Note for delivery:** PR #63 made `isOverdue` count a task due today as overdue for a while; PR #64 (`e4dcc08`) put it back. `npm test` passes 519 of 519 at `e4dcc08`. The story binds its "before today" boundary to `PD-0003` item 6 and AC-4, not to that function.
+- **Delivery manifest:** `product/initiatives/INIT-0008-warn-past-due-date/delivery/manifest.md`
+- **Tickets:** _created at HANDOFF (Ariadne project TTC, `PD-0015`; mapping authority `delivery/tickets.md`)._
 
 ## Handoff log
 
@@ -264,6 +294,7 @@ Dates are UTC timestamps.
 | 2026-11-24T08:02:00Z | SOLUTION_CONVERGENCE | DECOMPOSITION | ROLE-product-manager | SOLUTION_CONVERGENCE exit criteria met: one accepted `PD-0018` naming option A, B and six other shapes rejected with reasons, consequences (costs first) accepted; indexed in the same commit; `initiative.md` rev 3 and draft `REQ-0025` rev 2 consistent with it (success measure 3 states the `PD-0008` case, P4); no option left under consideration; Solution Contract cites `PD-0018` and records no design concept (no visual surface, `PD-0018` item 12) | Entry precondition (`lifecycle-hooks.md` §3.4.1 DECOMPOSITION) holds: exactly one `status: accepted` chosen-option `PD-` citing a non-`infeasible` verdict (`feasible-with-constraints`, `technical/assessment.md` round 1). HOOK-decision-capture R1 (index row, same commit), R3 (rejected options non-empty), D11 (decision counter 18 matches the highest id; `origin/main` at 17, no `PD-0018` there) pass. No escalation-class question: A keeps every accepted decision, B would amend `PD-0003` item 10 for build cost only (§4.1; escalation-policy §3 route 2). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5`, head `2e39e7d` |
 | 2026-11-24T08:12:00Z | DECOMPOSITION | READINESS | ROLE-product-manager | DECOMPOSITION exit criteria met: O1 and O2 -> accepted `REQ-0025` rev 4; it meets the nine points of §10.3 (accepted, one testable outcome, 10 pass/fail ACs, `CAP-0001`, no visual surface so no `DES-`, independently verifiable with the red-`main` condition stated as a Sequencing note, no `blocker` `Q-`, no contradiction, indexed in the same commit); coherence round 1 (terminal) left no open blocking defect; convergence declared (`converged: true`) | Entry precondition (`lifecycle-hooks.md` §3.4.1 READINESS) holds: `converged: true`; `HOOK-traceability` zero defects (Coverage validation, iteration 1); `technical/coherence.md` verdict `coherent`, round 1 terminal under §9d.3, D1 non-blocking and `fixed`; no user-facing story, so no `DES-` needed. AC texts for today's behaviour checked by the PM and by the architect on `node bin/ttc.js` at `e24972c`. Review budget this session: 1 of 6. Hooks: HOOK-phase-entry pass | `4e3902b0918715b5` (carried), head `338563c` (rebased from `2b63efb`) |
 | 2026-11-24T08:16:00Z | READINESS | ENGINEERING_READY | ROLE-product-manager | READINESS exit criteria met: round 1 verdict `READY` recorded by `ROLE-product-readiness-reviewer` in the Readiness log, no conditions, no known issues, 0 findings; round 1 terminal (no blocking finding, §9d.4) | Entry precondition (`lifecycle-hooks.md` §3.4.1 ENGINEERING_READY) holds: `readiness_verdict: READY`, not `void`; digest `(REQ-0025, 5, 2026-11-24)`, `INIT-0008` rev 3, unchanged on disk since the verdict; no `blocker` `Q-`; `REQ-0025` `accepted`. Review budget this session: 2 of 6 (coherence 1, readiness 1). Reviewer observation, not a finding: `technical/coherence.md` still shows D1 `open` in its own table; its disposition `fixed` is recorded in the Consultation log (the file is the architect's). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5` (carried), head `857430c` |
+| 2026-11-24T08:17:00Z | ENGINEERING_READY | HANDOFF | ROLE-product-manager | ENGINEERING_READY exit criteria met: Handoff packet self-contained (repository, outcome, story in sequence, no `DES-`, decisions in force, binding constraints C1–C5 and C8–C10, out of scope, no open questions); `delivery/manifest.md` at `band_owner: product`; `INIT-0008` `status: active` (index row updated in the same commit) | Entry precondition (`lifecycle-hooks.md` §3.4.1 HANDOFF) holds: `READY` verdict not `void`; manifest `story_set_digest` `REQ-0025@5/2026-11-24; INIT-0008@3` equals the verdict digest (M5); M1 one-node story graph, acyclic; M2 `REQ-0025` in one row, `accepted`; M3 no units yet (execution band empty, headings present); M4 `INIT-0008`, `REQ-0025`, `CAP-0001`, `PD-0003/0008/0017/0018` resolve, no `local_export`; M6 no `tickets.md` yet; M7 no HLD, plan, task breakdown or estimate; M8 n/a at `band_owner: product`. Story readiness copied as `engineering-ready` from the verdict, story file unchanged (as INIT-0007). Hooks: HOOK-phase-entry pass | `4e3902b0918715b5` (carried), head `8a1c575` |
 
 > Every product-side session updates this file before ending — **including
 > sessions that failed**, which record the failure in `next_action` and do not
