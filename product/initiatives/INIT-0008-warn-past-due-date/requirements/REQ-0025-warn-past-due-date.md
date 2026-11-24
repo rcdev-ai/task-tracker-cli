@@ -3,7 +3,7 @@ id: REQ-0025
 type: requirement
 title: A task added with a due date in the past gets a one-line warning
 status: accepted
-revision: 4
+revision: 5
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
@@ -106,22 +106,15 @@ The rules are `PD-0018`; this section states what the user sees.
 ## Sequencing
 
 None: the only story of INIT-0008, on the frontier. `depends_on: [none]`.
-
-Note for delivery, not a story dependency: CI runs only on pull requests,
-and a branch from `main` at `b290dc7` or later fails 6 existing overdue tests
-(4 in `test/overdue.test.js`, 2 in `test/stats.test.js`). PR #63 changed
-`isOverdue` in `src/overdue.js` from `<` to `<=`; its PR body says the change
-is deliberate, for a separate trial. Both clauses of AC-10, the local
-`npm test` run and the CI `test` check, can pass only once `main` no longer
-has those failures. This story does not change the overdue rule of
-`ttc list`, `ttc stats` or any other command.
+This story does not change the overdue rule of `ttc list`, `ttc stats` or any
+other command.
 
 ## Technical constraints
 
 From `technical/assessment.md`, round 1 (C6 and C7 apply to option B only and
 do not apply here, `PD-0018` item 1):
 
-- **C1**: "before today" uses the one existing local-date rule (`localToday()` in `src/overdue.js`): the due date is before today in string order on `YYYY-MM-DD`, in the local time zone; today is not past. No second notion of today. The boundary is `PD-0018` item 3 and AC-4, not whatever `isOverdue` returns: at `b290dc7`, `isOverdue` also counts a task due today (see Sequencing).
+- **C1**: "before today" uses the one existing local-date rule (`localToday()` in `src/overdue.js`): the due date is before today in string order on `YYYY-MM-DD`, in the local time zone; today is not past. No second notion of today. The boundary is `PD-0018` item 3 and AC-4.
 - **C2**: the warning comes only with a task that was saved. Every check and the save finish before any output, as today.
 - **C3**: on a failure after the save (stdout cannot be written, `PD-0008`), stderr still holds at most one line, and it is not the warning. A warning written to stderr as the command runs would go out before the stdout result is known. Meeting this touches the shared output and failure handling (`bin/ttc.js`, `src/cli.js`), not only `ttc add`.
 - **C4**: when stderr cannot be written, the existing handling turns the unwritten warning into exit 1, silently, with the task saved. This is the accepted rule (`PD-0018` item 7); no special case is added.
@@ -145,4 +138,5 @@ whole operable signal (`project/constraints.md` row 3).
 - Rev 2 (SOLUTION_CONVERGENCE): cites `PD-0018`.
 - Rev 3 (DECOMPOSITION): Behavior, AC-1 to AC-10 and technical constraints from `PD-0018` and `technical/assessment.md` round 1. Outputs of other commands checked on the CLI at `b290dc7`.
 - Rev 4 (DECOMPOSITION): coherence round 1 D1 fixed inline: the Sequencing note names both AC-10 clauses and says CI runs on pull requests (`technical/coherence.md`).
+- Rev 5 (READINESS, before the review): the red-`main` note is removed. PR #64 (TTC-867, merged as `e4dcc08`) put `isOverdue` back to `<`, and `npm test` passes 519 of 519 at `e4dcc08`.
 - `ttc help` is not asserted again here: the whole help is checked once, by `REQ-0024` AC-8 (`PD-0017`).
