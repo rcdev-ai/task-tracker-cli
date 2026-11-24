@@ -24,11 +24,22 @@ process.stdout.on('error', (err) => {
 });
 process.stderr.on('error', () => {
   failed = true;
+  lineWritten = true;
   process.exitCode = 1;
 });
 process.on('uncaughtException', (err) => fail(failureLine(err)));
 
 const { run } = require('../src/cli');
 
-const code = run(process.argv.slice(2), { stdout: process.stdout, stderr: process.stderr });
-process.exitCode = failed ? 1 : code;
+run(process.argv.slice(2), { stdout: process.stdout, stderr: process.stderr }).then(
+  (code) => { process.exitCode = failed ? 1 : code; },
+  (err) => {
+    if (err.outputStream === 'stderr') {
+      failed = true;
+      lineWritten = true;
+      process.exitCode = 1;
+    } else {
+      fail(failureLine(err));
+    }
+  },
+);

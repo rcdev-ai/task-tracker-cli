@@ -29,6 +29,13 @@ function ok(sb, ...args) {
   return r.stdout;
 }
 
+function okPastAdd(sb, due, ...args) {
+  const r = ttc(sb, 'add', ...args);
+  assert.equal(r.status, 0, args.join(' ') + ': ' + r.stderr);
+  assert.equal(r.stderr, `ttc: warning: due date ${due} is in the past\n`, args.join(' '));
+  return r.stdout;
+}
+
 function expectOk(sb, stdout, ...args) {
   assert.equal(ok(sb, ...args), stdout, args.join(' '));
 }
@@ -47,8 +54,8 @@ const fileBytes = (sb) => fs.readFileSync(sb.file);
 // The six tasks of AC-5 (with marks) or AC-7 (without).
 function sixTasks(sb, marked) {
   const imp = marked ? ['--important'] : [];
-  ok(sb, 'add', 'Alpha', '--due', '2000-01-01', '--tag', 'home');
-  ok(sb, 'add', 'Bravo', '--due', '2000-01-02', '--tag', 'home', ...imp);
+  okPastAdd(sb, '2000-01-01', 'Alpha', '--due', '2000-01-01', '--tag', 'home');
+  okPastAdd(sb, '2000-01-02', 'Bravo', '--due', '2000-01-02', '--tag', 'home', ...imp);
   ok(sb, 'add', 'Charlie', '--due', '2099-12-31');
   ok(sb, 'add', 'Delta', '--tag', 'home', ...imp);
   ok(sb, 'add', 'Echo', ...imp);

@@ -31,6 +31,13 @@ function ok(sb, ...args) {
   return r.stdout;
 }
 
+function okPastAdd(sb, due, ...args) {
+  const r = ttc(sb, 'add', ...args);
+  assert.equal(r.status, 0, args.join(' ') + ': ' + r.stderr);
+  assert.equal(r.stderr, `ttc: warning: due date ${due} is in the past\n`, args.join(' '));
+  return r.stdout;
+}
+
 function expectOk(sb, stdout, ...args) { assert.equal(ok(sb, ...args), stdout, args.join(' ')); }
 
 function expectFail(sb, stderr, ...args) {
@@ -47,7 +54,7 @@ const stored = (sb) => JSON.parse(bytes(sb).toString('utf8'));
 
 function setupAc1(t) {
   const sb = sandbox(t);
-  expectOk(sb, 'Added task 1\n', 'add', 'Pay rent', '--due', '2000-01-02', '--tag', 'bills');
+  assert.equal(okPastAdd(sb, '2000-01-02', 'Pay rent', '--due', '2000-01-02', '--tag', 'bills'), 'Added task 1\n');
   expectOk(sb, 'Added task 2\n', 'add', 'Call mom', '--tag', 'home');
   expectOk(sb, 'Added task 3\n', 'add', 'Fix bike', '--due', '2099-06-01');
   ok(sb, 'done', '3');

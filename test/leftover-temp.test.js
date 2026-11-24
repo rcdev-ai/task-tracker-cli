@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const { Writable } = require('node:stream');
 const { withLock } = require('../src/lock');
 
 const BIN = path.join(__dirname, '..', 'bin', 'ttc.js');
@@ -88,7 +89,7 @@ test('only a dead writer\'s temp file is removed; everything else stays (AC-2)',
   }
 });
 
-test('a leftover that cannot be removed does not fail the command (AC-3)', (t) => {
+test('a leftover that cannot be removed does not fail the command (AC-3)', async (t) => {
   const sb = sandbox();
   seed(sb);
   const leftover = tempOf(deadPid());
@@ -105,9 +106,9 @@ test('a leftover that cannot be removed does not fail the command (AC-3)', (t) =
   let out = '';
   let err = '';
   try {
-    const status = require('../src/cli').run(['add', 'y'], {
-      stdout: { write: (s) => { out += s; } },
-      stderr: { write: (s) => { err += s; } },
+    const status = await require('../src/cli').run(['add', 'y'], {
+      stdout: new Writable({ write(s, encoding, callback) { out += s; callback(); } }),
+      stderr: new Writable({ write(s, encoding, callback) { err += s; callback(); } }),
     });
     assert.equal(status, 0);
   } finally {

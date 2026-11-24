@@ -71,7 +71,9 @@ function assertOut(r, stdout) {
 test('an open task due yesterday is marked !overdue (AC1)', () => {
   withDates(UTC, (today, yesterday) => {
     const sb = sandbox();
-    assert.equal(ttc(sb, UTC, 'add', 'Pay rent', '--due', yesterday).status, 0);
+    const added = ttc(sb, UTC, 'add', 'Pay rent', '--due', yesterday);
+    assert.equal(added.status, 0);
+    assert.equal(added.stderr, `ttc: warning: due date ${yesterday} is in the past\n`);
     assertOut(ttc(sb, UTC, 'list'), `#1 [ ] Pay rent due:${yesterday} !overdue\n`);
   });
 });
@@ -116,6 +118,7 @@ test('the marker comes after the due date and before the tags (AC6)', () => {
     const sb = sandbox();
     const a = ttc(sb, UTC, 'add', 'Pay rent', '--due', yesterday, '--tag', 'home', '--tag', 'bills');
     assert.equal(a.status, 0);
+    assert.equal(a.stderr, `ttc: warning: due date ${yesterday} is in the past\n`);
     assertOut(ttc(sb, UTC, 'list'), `#1 [ ] Pay rent due:${yesterday} !overdue +bills +home\n`);
   });
 });

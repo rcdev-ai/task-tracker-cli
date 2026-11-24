@@ -16,8 +16,8 @@ function sandbox() {
   return { base, dataDir, file: path.join(dataDir, 'tasks.json') };
 }
 
-function envFor(sb) {
-  return { PATH: process.env.PATH, HOME: path.join(sb.base, 'home'), TTC_HOME: sb.dataDir };
+function envFor(sb, tz = 'UTC') {
+  return { PATH: process.env.PATH, HOME: path.join(sb.base, 'home'), TTC_HOME: sb.dataDir, TZ: tz };
 }
 
 function add(sb, ...args) {
@@ -35,9 +35,9 @@ function stored(sb) {
   return JSON.parse(fs.readFileSync(sb.file, 'utf8'));
 }
 
-function assertOk(r, id) {
+function assertOk(r, id, stderr = '') {
   assert.equal(r.status, 0);
-  assert.equal(r.stderr, '');
+  assert.equal(r.stderr, stderr);
   assert.equal(r.stdout, 'Added task ' + id + '\n');
 }
 
@@ -58,53 +58,82 @@ function assertFails(sb, args, line, { absent = false } = {}) {
   else assert.deepEqual(fs.readFileSync(sb.file), before);
 }
 
-test('add to a new list stores task 1 (criterion 1)', () => {
-  const sb = sandbox();
-  assertOk(add(sb, 'Buy milk'), 1);
-  assert.deepEqual(stored(sb), {
-    version: 4,
-    nextId: 2,
-    tasks: [{ id: 1, title: 'Buy milk', status: 'open', due: null, tags: [], note: null, important: false }],
-  });
+test('past-date add saves exact tasks, warns, and leaves other commands silent (TTC-868 AC-1/2/8)', () => {
+  let sb = sandbox();
+  assertOk(add(sb, 'Pay rent', '--due', '2000-01-02'), 1,
+    'ttc: warning: due date 2000-01-02 is in the past\n');
+  const rent = { id: 1, title: 'Pay rent', status: 'open', due: '2000-01-02', tags: [], note: null, important: false };
+  assert.deepEqual(stored(sb), { version: 4, nextId: 2, tasks: [rent] });
+  const list = spawnSync(process.execPath, [BIN, 'list'], { env: envFor(sb), encoding: 'utf8' });
+  assert.equal(list.status, 0);
+  assert.equal(list.stderr, '');
+  assert.equal(list.stdout, '#1 [ ] Pay rent due:2000-01-02 !overdue\n');
+
+  let backup = path.join(sb.base, 'x.json');
+  function expectCommand(args, stdout) {
+    const r = spawnSync(process.execPath, [BIN, ...args], { env: envFor(sb), encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(r.stdout, stdout);
+    assert.equal(r.stderr, '');
+  }
+  expectCommand(['export', backup], `Exported 1 tasks to ${backup}\n`);
+  assertOk(add(sb, '--tag', 'home', '--due', '1999-12-31', 'Fix bike', '--note', 'chain', '--important'), 2,
+    'ttc: warning: due date 1999-12-31 is in the past\n');
+  assert.deepEqual(stored(sb), { version: 4, nextId: 3, tasks: [rent,
+    { id: 2, title: 'Fix bike', status: 'open', due: '1999-12-31', tags: ['home'], note: 'chain', important: true },
+  ] });
+
+  // A fresh home for the exact non-add sequence in AC-8.
+  sb = sandbox();
+  backup = path.join(sb.base, 'x.json');
+  assertOk(add(sb, 'Pay rent', '--due', '2000-01-02'), 1,
+    'ttc: warning: due date 2000-01-02 is in the past\n');
+  expectCommand(['export', backup], `Exported 1 tasks to ${backup}\n`);
+  expectCommand(['copy', '1', '--due', '2000-01-03'], 'Copied task 1 as task 2\n');
+  expectCommand(['copy', '1'], 'Copied task 1 as task 3\n');
+  expectCommand(['due', '1', '1999-01-01'], 'Set due date of task 1 to 1999-01-01\n');
+  expectCommand(['import', backup], `Imported 1 tasks from ${backup}\n`);
+  assert.deepEqual(stored(sb), { version: 4, nextId: 2, tasks: [rent] });
 });
 
 test('a second add gets id 2 (criterion 2)', () => {
   const sb = sandbox();
-  add(sb, 'Buy milk');
-  assertOk(add(sb, 'Pay rent'), 2);
+  assertOk(add(sb, 'Pay rent', '--due', '2099-12-31'), 1);
+  assertOk(add(sb, 'Call mom'), 2);
   const list = stored(sb);
   assert.equal(list.nextId, 3);
   assert.deepEqual(
     list.tasks.map((t) => [t.id, t.title, t.status]),
     [
-      [1, 'Buy milk', 'open'],
-      [2, 'Pay rent', 'open'],
+      [1, 'Pay rent', 'open'],
+      [2, 'Call mom', 'open'],
     ],
   );
 });
 
 test('due date and tags are stored (criterion 3)', () => {
   const sb = sandbox();
-  assertOk(add(sb, 'Pay rent', '--due', '2026-10-01', '--tag', 'bills', '--tag', 'home'), 1);
+  assertOk(add(sb, 'Pay rent', '--due', '2099-12-31', '--tag', 'bills', '--tag', 'home'), 1);
   const t = stored(sb).tasks[0];
-  assert.equal(t.due, '2026-10-01');
+  assert.equal(t.due, '2099-12-31');
   assert.deepEqual([...t.tags].sort(), ['bills', 'home']);
 });
 
 test('options may come before the title (criterion 4)', () => {
   const sb = sandbox();
-  assertOk(add(sb, '--tag', 'home', '--due', '2026-10-01', 'Pay rent'), 1);
+  assertOk(add(sb, '--tag', 'home', '--due', '2099-12-31', 'Pay rent'), 1);
   const t = stored(sb).tasks[0];
   assert.equal(t.title, 'Pay rent');
-  assert.equal(t.due, '2026-10-01');
+  assert.equal(t.due, '2099-12-31');
   assert.deepEqual(t.tags, ['home']);
 });
 
 test('past and leap-day due dates are accepted (criterion 5)', () => {
   const sb = sandbox();
-  assertOk(add(sb, 'Old bill', '--due', '2020-01-01'), 1);
-  assertOk(add(sb, 'Leap day', '--due', '2028-02-29'), 2);
-  assert.deepEqual(stored(sb).tasks.map((t) => t.due), ['2020-01-01', '2028-02-29']);
+  assertOk(add(sb, 'Old bill', '--due', '2020-01-01'), 1,
+    'ttc: warning: due date 2020-01-01 is in the past\n');
+  assertOk(add(sb, 'Leap day', '--due', '2104-02-29'), 2);
+  assert.deepEqual(stored(sb).tasks.map((t) => t.due), ['2020-01-01', '2104-02-29']);
 });
 
 for (const d of ['2026-02-30', '2027-02-29', '10/01/2026', '2026-1-5', 'tomorrow']) {
@@ -204,17 +233,60 @@ for (const args of [
   });
 }
 
-test('an unreadable tasks.json gives a cannot-read error and stays as is (criterion 18)', () => {
+test('failed past-date adds print only the error and preserve file bytes (TTC-868 AC-5)', () => {
   const sb = sandbox();
-  fs.mkdirSync(sb.dataDir, { recursive: true });
-  fs.writeFileSync(sb.file, '{');
-  const r = add(sb, 'x');
+  assertOk(add(sb, 'Call mom'), 1);
+  const before = fs.readFileSync(sb.file);
+  for (const [args, line] of [
+    [['Pay rent', '--due', '2000-01-02', '--tag', 'a b'], 'ttc: invalid tag: a b'],
+    [['', '--due', '2000-01-02'], 'ttc: title must be one non-empty line'],
+    [['Pay rent', '--due', '2000-01-02', '--due', '2000-01-03'], 'ttc: option given twice: --due'],
+    [['Pay rent', '--due', '2000-02-30'], 'ttc: invalid date: 2000-02-30'],
+  ]) {
+    const r = add(sb, ...args);
+    assert.equal(r.status, 1);
+    assert.equal(r.stdout, '');
+    assert.equal(r.stderr, line + '\n');
+    assert.deepEqual(fs.readFileSync(sb.file), before);
+  }
+  fs.writeFileSync(sb.file, 'not json');
+  const corrupt = fs.readFileSync(sb.file);
+  const r = add(sb, 'Pay rent', '--due', '2000-01-02');
   assert.equal(r.status, 1);
   assert.equal(r.stdout, '');
   const prefix = 'ttc: cannot read ' + sb.file + ': ';
   assert.ok(r.stderr.startsWith(prefix), r.stderr);
   assert.match(r.stderr.slice(prefix.length), /^[^\n]+\n$/);
-  assert.equal(fs.readFileSync(sb.file, 'utf8'), '{');
+  assert.deepEqual(fs.readFileSync(sb.file), corrupt);
+});
+
+// Compute calendar dates independently of the production overdue helper.
+function dateIn(timeZone) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date());
+}
+
+test('add warns only before local today in both date-line zones (TTC-868 AC-4)', () => {
+  for (const tz of ['Pacific/Pago_Pago', 'Pacific/Kiritimati']) {
+    let stable = false;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const today = dateIn(tz);
+      const [y, m, d] = today.split('-').map(Number);
+      const yesterday = new Date(Date.UTC(y, m - 1, d - 1)).toISOString().slice(0, 10);
+      const sb = sandbox();
+      const options = { env: envFor(sb, tz), encoding: 'utf8' };
+      const current = spawnSync(process.execPath, [BIN, 'add', 'Pay rent', '--due', today], options);
+      const past = spawnSync(process.execPath, [BIN, 'add', 'Call mom', '--due', yesterday], options);
+      // Retry only a real date change, never a stable-date assertion failure.
+      if (dateIn(tz) !== today) continue;
+      assertOk(current, 1);
+      assertOk(past, 2, `ttc: warning: due date ${yesterday} is in the past\n`);
+      stable = true;
+      break;
+    }
+    assert.ok(stable, `local date changed during both attempts in ${tz}`);
+  }
 });
 
 test('a missing data folder and its parents are created (criterion 19)', () => {

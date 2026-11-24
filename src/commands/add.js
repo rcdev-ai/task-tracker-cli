@@ -5,6 +5,7 @@ const { TtcError } = require('../errors');
 const { inputTitle, inputTag, inputNote, isValidDate } = require('../rules');
 const { readList, writeList } = require('../storage');
 const { withLock } = require('../lock');
+const { localToday, isOverdue } = require('../overdue');
 
 module.exports = {
   name: 'add',
@@ -46,5 +47,9 @@ module.exports = {
     });
 
     ctx.stdout.write('Added task ' + id + '\n');
+    const today = localToday();
+    if (isOverdue({ status: 'open', due }, today)) {
+      ctx.stderr.write('ttc: warning: due date ' + due + ' is in the past\n');
+    }
   },
 };

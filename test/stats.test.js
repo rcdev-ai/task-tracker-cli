@@ -69,7 +69,15 @@ function assertOut(r, stdout) {
 const counts = (open, done, overdue) => `open: ${open}\ndone: ${done}\noverdue: ${overdue}\n`;
 
 function add(sb, ...args) {
-  assert.equal(ttc(sb, UTC, 'add', ...args).status, 0);
+  const r = ttc(sb, UTC, 'add', ...args);
+  assert.equal(r.status, 0);
+  assert.equal(r.stderr, '');
+}
+
+function addPast(sb, due, ...args) {
+  const r = ttc(sb, UTC, 'add', ...args);
+  assert.equal(r.status, 0);
+  assert.equal(r.stderr, `ttc: warning: due date ${due} is in the past\n`);
 }
 
 function lines(r) {
@@ -103,11 +111,11 @@ test('reopen moves a task back to open (criterion 3)', () => {
 test('overdue counts open tasks due before today and matches list --overdue (criterion 4)', () => {
   withDates(UTC, (today, yesterday, tomorrow) => {
     const sb = sandbox();
-    add(sb, 'A', '--due', yesterday);
+    addPast(sb, yesterday, 'A', '--due', yesterday);
     add(sb, 'B', '--due', today);
     add(sb, 'C', '--due', tomorrow);
     add(sb, 'D');
-    add(sb, 'E', '--due', yesterday);
+    addPast(sb, yesterday, 'E', '--due', yesterday);
     assert.equal(ttc(sb, UTC, 'done', '5').status, 0);
     assertOut(ttc(sb, UTC, 'stats'), counts(4, 1, 1));
     assert.equal(lines(ttc(sb, UTC, 'list')).length, 4);
@@ -119,8 +127,8 @@ test('overdue counts open tasks due before today and matches list --overdue (cri
 test('overdue tasks are also counted as open (criterion 5)', () => {
   withDates(UTC, (today, yesterday) => {
     const sb = sandbox();
-    add(sb, 'A', '--due', '2020-01-01');
-    add(sb, 'B', '--due', yesterday);
+    addPast(sb, '2020-01-01', 'A', '--due', '2020-01-01');
+    addPast(sb, yesterday, 'B', '--due', yesterday);
     assertOut(ttc(sb, UTC, 'stats'), counts(2, 0, 2));
   });
 });

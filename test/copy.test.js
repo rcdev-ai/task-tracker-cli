@@ -29,6 +29,13 @@ function ok(sb, ...args) {
   return r.stdout;
 }
 
+function okPastAdd(sb, due, ...args) {
+  const r = ttc(sb, 'add', ...args);
+  assert.equal(r.status, 0, args.join(' ') + ': ' + r.stderr);
+  assert.equal(r.stderr, `ttc: warning: due date ${due} is in the past\n`, args.join(' '));
+  return r.stdout;
+}
+
 function expectOk(sb, stdout, ...args) {
   assert.equal(ok(sb, ...args), stdout, args.join(' '));
 }
@@ -72,7 +79,7 @@ test('AC-1–2: copy a done, important task without changing existing tasks or s
 
 test('AC-3: due override accepts both option positions, the date limit and past dates', (t) => {
   const sb = sandbox(t);
-  ok(sb, 'add', 'Pay rent', '--due', '2020-01-01', '--tag', 'bills');
+  okPastAdd(sb, '2020-01-01', 'Pay rent', '--due', '2020-01-01', '--tag', 'bills');
   const before = stored(sb);
   expectOk(sb, 'Copied task 1 as task 2\n', 'copy', '1', '--due', '2099-11-01');
   expectOk(sb, 'Copied task 1 as task 3\n', 'copy', '--due', '9999-12-31', '1');
@@ -94,7 +101,7 @@ test('AC-3: due override accepts both option positions, the date limit and past 
 
 test('AC-4–5: copy retains overdue dates and null fields, or adds a due date', (t) => {
   const overdue = sandbox(t);
-  ok(overdue, 'add', 'Pay rent', '--due', '2020-01-01');
+  okPastAdd(overdue, '2020-01-01', 'Pay rent', '--due', '2020-01-01');
   const source = stored(overdue).tasks[0];
   expectOk(overdue, 'Copied task 1 as task 2\n', 'copy', '1');
   assert.deepEqual(stored(overdue), { version: 4, nextId: 3, tasks: [source, { ...source, id: 2 }] });
