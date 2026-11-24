@@ -312,17 +312,17 @@ for (const [args, line] of [
 
 // RCDEV-864: the accepted fixture is created through the public commands.
 function noDueFixture(sb) {
-  for (const args of [
-    ['add', 'Pay rent', '--due', '2000-01-02', '--tag', 'bills'],
-    ['add', 'Call mom', '--tag', 'home'],
-    ['add', 'Plan trip', '--due', '2099-05-01'],
-    ['add', 'Fix bike', '--tag', 'home'],
-    ['add', 'Water plants', '--important'],
-    ['done', '4'],
+  for (const [args, expectedStderr] of [
+    [['add', 'Pay rent', '--due', '2000-01-02', '--tag', 'bills'], 'ttc: warning: due date 2000-01-02 is in the past\n'],
+    [['add', 'Call mom', '--tag', 'home'], ''],
+    [['add', 'Plan trip', '--due', '2099-05-01'], ''],
+    [['add', 'Fix bike', '--tag', 'home'], ''],
+    [['add', 'Water plants', '--important'], ''],
+    [['done', '4'], ''],
   ]) {
     const r = ttc(sb, ...args);
     assert.equal(r.status, 0, JSON.stringify(args));
-    assert.equal(r.stderr, '');
+    assert.equal(r.stderr, expectedStderr, JSON.stringify(args));
   }
 }
 

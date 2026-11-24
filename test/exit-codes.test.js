@@ -73,6 +73,7 @@ function assertCutOff(r) {
 }
 
 const closeStdout = (child) => child.stdout.destroy();
+const closeStderr = (child) => child.stderr.destroy();
 const closeBoth = (child) => {
   child.stdout.destroy();
   child.stderr.destroy();
@@ -203,12 +204,36 @@ for (const args of [['stats'], ['help']]) {
 }
 
 // AC-2 / PD-0008: the saved change stays saved.
-test('add with stdout closed exits 1 and the change stays saved', TIMEOUT, async () => {
-  const sb = sandbox();
-  assertCutOff(await ttc(sb, ['add', 'x'], { early: closeStdout }));
-  const r = await ttc(sb, ['list']);
-  assertSuccess(r);
-  assert.match(r.stdout, /^#1 \[ \] x$/m);
+test('add with stdout closed exits 1, suppresses warnings, and keeps the saved task', TIMEOUT, async () => {
+  for (const [args, listing] of [
+    [['add', 'x'], '#1 [ ] x\n'],
+    [['add', 'Pay rent', '--due', '2000-01-02'], '#1 [ ] Pay rent due:2000-01-02 !overdue\n'],
+  ]) {
+    const sb = sandbox();
+    const closed = await ttc(sb, args, { early: closeStdout });
+    assertCutOff(closed);
+    assert.doesNotMatch(closed.stderr, /ttc: warning:/);
+    const r = await ttc(sb, ['list']);
+    assertSuccess(r);
+    assert.equal(r.stdout, listing);
+  }
+});
+
+test('closed stderr fails a past-date warning but leaves a future-date add successful (TTC-868 AC-7)', TIMEOUT, async () => {
+  const past = sandbox();
+  const failed = await ttc(past, ['add', 'Pay rent', '--due', '2000-01-02'], { early: closeStderr });
+  assert.equal(failed.status, 1);
+  assert.equal(failed.signal, null);
+  assert.equal(failed.stdout, 'Added task 1\n');
+  assert.equal(failed.stderr, '');
+  const listing = await ttc(past, ['list']);
+  assertSuccess(listing);
+  assert.equal(listing.stdout, '#1 [ ] Pay rent due:2000-01-02 !overdue\n');
+
+  const future = await ttc(sandbox(), ['add', 'Call mom', '--due', '2099-12-31'], { early: closeStderr });
+  assertSuccess(future);
+  assert.equal(future.signal, null);
+  assert.equal(future.stdout, 'Added task 1\n');
 });
 
 // AC-3

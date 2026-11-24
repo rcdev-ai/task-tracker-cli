@@ -6,4 +6,4 @@ const { killAtStep } = require('./kill-at-step');
 killAtStep(process.argv[2]);
 
 const { run } = require('../../src/cli');
-process.exitCode = run(['add', 'x'], { stdout: process.stdout, stderr: process.stderr });
+run(['add', 'x'], { stdout: process.stdout, stderr: process.stderr }).then((code) => { process.exitCode = code; });

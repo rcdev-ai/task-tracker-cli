@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { Writable } = require('node:stream');
 const { readList, writeList } = require('../src/storage');
 const { TtcError } = require('../src/errors');
 
@@ -97,7 +98,7 @@ test('TTC_HOME naming a regular file fails the write and keeps the file (criteri
   assert.equal(fs.readFileSync(file, 'utf8'), 'keep me');
 });
 
-test('a first write fsyncs the temp file, the data folder, then the parent of every folder it made (AC-6)', (t) => {
+test('a first write fsyncs the temp file, the data folder, then the parent of every folder it made (AC-6)', async (t) => {
   const paths = new Map();
   const synced = [];
   const openSync = fs.openSync;
@@ -116,12 +117,12 @@ test('a first write fsyncs the temp file, the data folder, then the parent of ev
     ['writeList', (dir) => writeList(listOf('x'), { TTC_HOME: dir })],
     [
       'ttc add',
-      (dir) => {
+      async (dir) => {
         const before = process.env.TTC_HOME;
         process.env.TTC_HOME = dir;
         try {
-          const out = { write() {} };
-          assert.equal(cliRun(['add', 'x'], { stdout: out, stderr: out }), 0);
+          const out = new Writable({ write(s, encoding, callback) { callback(); } });
+          assert.equal(await cliRun(['add', 'x'], { stdout: out, stderr: out }), 0);
         } finally {
           if (before === undefined) delete process.env.TTC_HOME;
           else process.env.TTC_HOME = before;
@@ -133,7 +134,7 @@ test('a first write fsyncs the temp file, the data folder, then the parent of ev
     const base = fs.realpathSync(tmpDir());
     const dir = path.join(base, 'a', 'b', 'data');
     synced.length = 0;
-    write(dir);
+    await write(dir);
     assert.equal(synced.length, 5, name);
     assert.match(path.basename(synced[0]), /^\.tasks\.json\.[1-9][0-9]*\.[0-9a-f]{12}\.tmp$/, name);
     assert.equal(path.dirname(synced[0]), dir, name);

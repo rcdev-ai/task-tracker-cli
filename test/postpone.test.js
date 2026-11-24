@@ -31,6 +31,13 @@ function ok(sb, ...args) {
   return r.stdout;
 }
 
+function okPastAdd(sb, due, ...args) {
+  const r = ttc(sb, 'add', ...args);
+  assert.equal(r.status, 0, args.join(' ') + ': ' + r.stderr);
+  assert.equal(r.stderr, `ttc: warning: due date ${due} is in the past\n`, args.join(' '));
+  return r.stdout;
+}
+
 function expectOk(sb, stdout, ...args) {
   assert.equal(ok(sb, ...args), stdout, args.join(' '));
 }
@@ -82,7 +89,7 @@ test('AC-1: postpone moves the due date one day', () => {
 test('AC-2: an overdue task moves to tomorrow', () => {
   withDates(UTC, (today, tomorrow) => {
     const sb = sandbox();
-    ok(sb, 'add', 'Pay rent', '--due', '2000-01-01');
+    okPastAdd(sb, '2000-01-01', 'Pay rent', '--due', '2000-01-01');
     expectOk(sb, `Postponed task 1 to ${tomorrow}\n`, 'postpone', '1');
     expectOk(sb, `#1 [ ] Pay rent due:${tomorrow}\n`, 'list');
     expectOk(sb, 'No tasks.\n', 'list', '--overdue');
@@ -99,8 +106,8 @@ test('AC-3: a task due today moves to tomorrow', () => {
 
 test('AC-4: month, year and leap-day rollover', () => {
   const sb = sandbox();
-  for (const due of ['2096-02-28', '2099-02-28', '2099-12-31', '2100-02-28']) ok(sb, 'add', 'Pay rent', '--due', due);
-  expectOk(sb, 'Postponed task 1 to 2096-02-29\n', 'postpone', '1');
+  for (const due of ['2104-02-28', '2099-02-28', '2099-12-31', '2100-02-28']) ok(sb, 'add', 'Pay rent', '--due', due);
+  expectOk(sb, 'Postponed task 1 to 2104-02-29\n', 'postpone', '1');
   expectOk(sb, 'Postponed task 2 to 2099-03-01\n', 'postpone', '2');
   expectOk(sb, 'Postponed task 3 to 2100-01-01\n', 'postpone', '3');
   expectOk(sb, 'Postponed task 4 to 2100-03-01\n', 'postpone', '4');
