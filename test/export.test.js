@@ -320,10 +320,11 @@ test('export into a missing folder fails and leaves the work folder unchanged (A
   assert.deepEqual(listing(sb.work), []);
 });
 
-test('export --format given twice and with no value are one-line errors', () => {
+test('export repeated, missing-value and list-only options are one-line errors', () => {
   const sb = sandbox();
   assertFails(sb, ['export', '--format', 'csv', '--format', 'json'], 'ttc: option given twice: --format');
   assertFails(sb, ['export', '--format'], 'ttc: option needs a value: --format');
+  assertFails(sb, ['export', 'out.json', '--count'], 'ttc: unknown option: --count');
   assert.deepEqual(listing(sb.work), []);
 });
 

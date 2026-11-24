@@ -14,6 +14,11 @@ exact output and exit codes, refusal of extra arguments, and that missing task
 data stays absent and existing task data stays unchanged, including the default HOME.
 Run the CLI cases with `node --test test/cli.test.js`.
 
+`test/list.test.js` covers list count output for empty and populated results,
+all filters and their combinations, note search, argument errors, and unchanged
+storage. `test/export.test.js` checks that export refuses the list-only `--count`
+option. Run these with `node --test test/list.test.js test/export.test.js`.
+
 ## Task notes
 
 Each task can have one note. It is optional and one line long. A note follows the same rules as a title: spaces are trimmed from both ends of typed text, the note cannot be empty, and it cannot contain a line break or a control character.
@@ -131,7 +136,7 @@ ttc clean
 ## Listing and filtering tasks
 
 ```
-ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>]
+ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY-MM-DD] [--due-to YYYY-MM-DD] [--search <text>] [--count]
 ```
 
 - Status view: `--open` (the default), `--done`, `--all` or `--overdue`. Give at most one of them.
@@ -140,12 +145,15 @@ ttc list [--open|--done|--all|--overdue] [--no-due] [--tag <t>] [--due-from YYYY
 - `--due-from YYYY-MM-DD`: only tasks due on or after that date.
 - `--due-to YYYY-MM-DD`: only tasks due on or before that date. The range is inclusive at both ends, and either option works alone as an open-ended range.
 - `--search <text>`: only tasks whose title or note contains the text. The match is a literal substring, ignoring upper and lower case. There are no wildcards and no regular expressions. An empty text is an error.
+- `--count`: prints only the number of matching tasks as a decimal integer and one newline, with `0` when none match. It combines with every valid list filter and never changes task data.
 
 Important tasks come first, then the others; inside each group tasks are in ascending id order. This holds in every view and with every filter. An important task's line has the token `!important` after `!overdue` (when present) and before the tags, for example `#2 [ ] Pay rent due:2000-01-02 !overdue !important +home`.
 
 Every option can be given at most once. All options combine with AND: a task is listed only if it passes every option given. The one exception is `--no-due` with `--overdue`, `--due-from` or `--due-to`: these combinations are refused. For example, `ttc list --no-due --overdue` prints `ttc: options cannot be combined: --overdue --no-due`. When `--due-from` or `--due-to` is given, tasks with no due date are left out.
 
 Example: `ttc list --all --due-from 2026-01-01 --due-to 2026-01-31 --search rent` lists every task, open or done, due in January 2026 whose title or note contains "rent".
+
+For example, `ttc list --done --tag home --count` prints `2` if two done tasks have the tag `home`.
 
 ## Exporting tasks
 
