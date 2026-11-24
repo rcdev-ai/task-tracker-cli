@@ -13,7 +13,7 @@ function localToday(now = new Date()) {
 // today is not overdue and a done task never is. Stored dates are YYYY-MM-DD,
 // so comparing the strings gives date order.
 function isOverdue(task, today) {
-  return task.status === 'open' && task.due !== null && task.due < today;
+  return task.status === 'open' && task.due !== null && task.due <= today;
 }
 
 module.exports = { localToday, isOverdue };
