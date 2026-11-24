@@ -3,7 +3,7 @@ id: PSTATE-INIT-0008
 type: product-state
 title: Product definition state for INIT-0008
 status: authoritative
-revision: 6
+revision: 7
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
@@ -12,7 +12,7 @@ initiative: INIT-0008
 phase: DECOMPOSITION
 phase_entered: 2026-11-24
 requester: "the requester (repository owner), via the driving session, 2026-11-24"
-next_action: "ROLE-product-manager: dispatch ROLE-planner (story-set-technical-coherence, full pass, round 1 of 2) on draft REQ-0025 rev 3, then disposition its defects"
+next_action: "ROLE-product-manager: run coverage validation (full), accept REQ-0025 and declare convergence"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
@@ -47,7 +47,7 @@ warning, not a refusal.
 
 ## Next action
 
-ROLE-product-manager: dispatch ROLE-planner (story-set-technical-coherence, full pass, round 1 of 2) on draft REQ-0025 rev 3, then disposition its defects.
+ROLE-product-manager: run coverage validation (full), accept REQ-0025 and declare convergence.
 
 ## Blocked by
 
@@ -169,10 +169,12 @@ is left under consideration.
 | Date | Delegate role | Question | Answer / verdict | Recorded as |
 | --- | --- | --- | --- | --- |
 | 2026-11-24 | ROLE-planner (PRODUCT-DISCOVERY) | Feasibility verdict, constraints, risks and band for options A and B, plus recommendations on when the warning prints, an unwritable warning, today, test impact, README and the story split (one dispatch: capability scan, impact, assessment; §9d.1) | A `feasible-with-constraints`, `multi-component`; B `feasible-with-constraints`, `contained`; constraints C1–C10 (C3–C5 A only, C6–C7 B only); risks R1–R5 (R1–R3 A only, R4 B only); assumptions P1 blocking for B only, P2–P4 narrowing; no stored-format change. N1 warn only when `ttc add` exits 0, after `Added task <id>`; N2 an unwritable line is `PD-0008` (exit 1, task kept); N3 the overdue rule; N4 A 17 tests in 7 files, B 7 in 2, both inside `PD-0017`, `2026-10-01` in `test/add.test.js` now past (C10); N5 README "Adding a task" plus one "Exit codes" sentence; N6 one story. No `Q-`. Registry note: `CAP-0001` out of date (as in INIT-0002..0007) | `technical/capability-scan.md`, `technical/impact.md`, `technical/assessment.md` (round 1); Options table; this row |
+| 2026-11-24 | ROLE-planner (PRODUCT-DISCOVERY) | Story-set technical coherence, full pass, on the draft set `REQ-0025` rev 3 against `PD-0018` and `technical/assessment.md` round 1, at head `e24972c` (after PR #62 `ttc list --count` and PR #63 `isOverdue` `<=`); declared round 1 of 2, terminal unless it reports a blocking defect (§9d.3, §9a.1) | `coherent`; one non-blocking defect D1 (the Sequencing note names only AC-10's CI clause as waiting for a green `main`; the local `npm test` clause waits too, and CI runs only on pull requests); no `Q-`. C1, C3, C4, C9, C10 re-measured and still hold (C9: 17 tests in 7 files, on top of the 6 already failing); every AC text resting on today's behaviour matches `node bin/ttc.js` at `e24972c`; the red-CI note is accurate and not a hidden prerequisite; the set still matches option A. Side note: while PR #63 stays, `PD-0018` item 3's "exactly when the task would show `!overdue`" is false for a date equal to today; REQ-0025 C1 and AC-4 bind the boundary to `PD-0003` item 6, so the story is unaffected. Round 1 terminal: no round 2. D1 `fixed` inline by the PM (`REQ-0025` rev 4, Sequencing note), no re-review (§9d.3) | `technical/coherence.md` (round 1); this row |
 
 Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | artifact produced`
 
 - `SOLUTION_EXPLORATION | ROLE-planner | claude | opus | L (subagent reported 109,580 tokens, 31 tool uses, 491 s) | aaef3ab929c58bfa8 | technical/capability-scan.md, impact.md, assessment.md`
+- `DECOMPOSITION | ROLE-planner | claude | opus | L (subagent reported 90,133 tokens, 24 tool uses, 316 s) | a1fd2241b2517480e | technical/coherence.md (round 1)`
 
 ## Escalation log
 
@@ -183,7 +185,7 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
-| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 3) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
+| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 4) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
 
 ## Coverage validation
 

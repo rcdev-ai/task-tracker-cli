@@ -3,7 +3,7 @@ id: REQ-0025
 type: requirement
 title: A task added with a due date in the past gets a one-line warning
 status: draft
-revision: 3
+revision: 4
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
@@ -107,11 +107,13 @@ The rules are `PD-0018`; this section states what the user sees.
 
 None: the only story of INIT-0008, on the frontier. `depends_on: [none]`.
 
-Note for delivery, not a story dependency: the CI `test` check is red on
-`main` at `b290dc7`. PR #63 changed `isOverdue` in `src/overdue.js` from
-`<` to `<=`, and 6 existing overdue tests fail; the PR body says the change
-is deliberate, for a separate trial. AC-10's CI criterion can pass only once
-`main` is green again. This story does not change the overdue rule of
+Note for delivery, not a story dependency: CI runs only on pull requests,
+and a branch from `main` at `b290dc7` or later fails 6 existing overdue tests
+(4 in `test/overdue.test.js`, 2 in `test/stats.test.js`). PR #63 changed
+`isOverdue` in `src/overdue.js` from `<` to `<=`; its PR body says the change
+is deliberate, for a separate trial. Both clauses of AC-10, the local
+`npm test` run and the CI `test` check, can pass only once `main` no longer
+has those failures. This story does not change the overdue rule of
 `ttc list`, `ttc stats` or any other command.
 
 ## Technical constraints
@@ -142,4 +144,5 @@ whole operable signal (`project/constraints.md` row 3).
 - Raw request: `product/sources/2026-11-24-requester-request.md`.
 - Rev 2 (SOLUTION_CONVERGENCE): cites `PD-0018`.
 - Rev 3 (DECOMPOSITION): Behavior, AC-1 to AC-10 and technical constraints from `PD-0018` and `technical/assessment.md` round 1. Outputs of other commands checked on the CLI at `b290dc7`.
+- Rev 4 (DECOMPOSITION): coherence round 1 D1 fixed inline: the Sequencing note names both AC-10 clauses and says CI runs on pull requests (`technical/coherence.md`).
 - `ttc help` is not asserted again here: the whole help is checked once, by `REQ-0024` AC-8 (`PD-0017`).
