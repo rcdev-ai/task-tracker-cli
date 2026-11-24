@@ -3,7 +3,7 @@ id: PSTATE-INIT-0008
 type: product-state
 title: Product definition state for INIT-0008
 status: authoritative
-revision: 5
+revision: 6
 owner_role: ROLE-product-manager
 created: 2026-11-24
 updated: 2026-11-24
@@ -12,7 +12,7 @@ initiative: INIT-0008
 phase: DECOMPOSITION
 phase_entered: 2026-11-24
 requester: "the requester (repository owner), via the driving session, 2026-11-24"
-next_action: "ROLE-product-manager: write REQ-0025 Behavior, acceptance criteria and technical constraints from PD-0018 and technical/assessment.md, then dispatch ROLE-planner for story-set coherence round 1"
+next_action: "ROLE-product-manager: dispatch ROLE-planner (story-set-technical-coherence, full pass, round 1 of 2) on draft REQ-0025 rev 3, then disposition its defects"
 blocked_by: []
 converged: false
 readiness_verdict: none   # none | READY | READY-with-known-issues | NOT READY | void
@@ -47,7 +47,7 @@ warning, not a refusal.
 
 ## Next action
 
-ROLE-product-manager: write REQ-0025 Behavior, acceptance criteria and technical constraints from PD-0018 and technical/assessment.md, then dispatch ROLE-planner for story-set coherence round 1.
+ROLE-product-manager: dispatch ROLE-planner (story-set-technical-coherence, full pass, round 1 of 2) on draft REQ-0025 rev 3, then disposition its defects.
 
 ## Blocked by
 
@@ -183,7 +183,7 @@ Dispatch log: `phase | delegate | vendor | model | tokens-scale | ledger run | a
 
 | `REQ-` | Title | Status | `CAP-` | `DES-` | Sequencing note |
 | --- | --- | --- | --- | --- | --- |
-| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 2) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
+| REQ-0025 | A task added with a due date in the past gets a one-line warning | draft (rev 3) | CAP-0001 | none — no user-facing visual surface | none — on the frontier |
 
 ## Coverage validation
 
