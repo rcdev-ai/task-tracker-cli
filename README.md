@@ -6,6 +6,10 @@ Install from a clone with `npm install --global .`, then run `ttc help`.
 `npm test` runs the test suite.
 `npm run lint` checks every source and test file for syntax errors.
 
+## Testing
+
+- `test/cli.test.js`: `ttc -h matches --help and help without creating or changing task data` compares complete help output and checks that missing task directories stay absent and an existing task file keeps its bytes and modification time.
+
 ## Task notes
 
 Each task can have one note. It is optional and one line long. A note follows the same rules as a title: spaces are trimmed from both ends of typed text, the note cannot be empty, and it cannot contain a line break or a control character.
